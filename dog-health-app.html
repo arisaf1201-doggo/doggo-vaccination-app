@@ -90,21 +90,21 @@ body{background:var(--bg);font-family:'Zen Maru Gothic',sans-serif;color:var(--t
 </div>
 <script>
 var DOGS=[{id:"koharu",name:"こはる",emoji:"🐕",color:"#E8956D"},{id:"noel",name:"Noël",emoji:"🐩",color:"#7EB8C9"},{id:"elmo",name:"エルモ",emoji:"🦮",color:"#C97EB8"},{id:"ralph",name:"ラルフ",emoji:"🐶",color:"#7EC97E"}];
-var VACCINES=[{id:"mixed",name:"混合ワクチン",icon:"💉",im:12},{id:"rabies",name:"狂犬病",icon:"🔴",im:12};
+var VACCINES=[{id:"mixed",name:"混合ワクチン",icon:"💉",im:12},{id:"rabies",name:"狂犬病",icon:"🔴",im:12}];
 var MONTHS=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
 var now=new Date(),CY=now.getFullYear(),CM=now.getMonth()+1;
 function initR(){return Object.fromEntries(DOGS.map(function(d){return[d.id,{vaccines:Object.fromEntries(VACCINES.map(function(v){return[v.id,""]})),hw:Object.fromEntries(Array.from({length:12},function(_,i){return[i+1,""]}))}]}))}
-var REC=(function(){try{var s=localStorage.getItem("wanko2");return s?JSON.parse(s):initR()}catch(e){return initR()}})();
+var REC=(function(){try{var s=localStorage.getItem("wanko3");return s?JSON.parse(s):initR()}catch(e){return initR()}})();
 var AD=DOGS[0].id,AT="vaccines",EV=null;
-function save(){try{localStorage.setItem("wanko2",JSON.stringify(REC))}catch(e){}}
+function save(){try{localStorage.setItem("wanko3",JSON.stringify(REC))}catch(e){}}
 function fd(s){if(!s)return"未記録";var d=new Date(s+"T00:00:00");return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"}
-function fds(s){if(!s)return"";var d=new Date(s+"T00:00:00");return(d.getMonth()+1)+"/"+ d.getDate()}
+function fds(s){if(!s)return"";var d=new Date(s+"T00:00:00");return(d.getMonth()+1)+"/"+d.getDate()}
 function nd(s,m){if(!s)return null;var d=new Date(s+"T00:00:00");d.setMonth(d.getMonth()+m);return d}
 function du(d){if(!d)return null;var t=new Date();t.setHours(0,0,0,0);return Math.round((d-t)/86400000)}
 function bh(days){if(days===null)return'<span class="badge b-none">未記録</span>';if(days<0)return'<span class="badge b-over">期限切れ</span>';if(days<=30)return'<span class="badge b-soon">あと'+days+'日</span>';return'<span class="badge b-ok">あと'+days+'日</span>'}
 function dc(){return DOGS.find(function(d){return d.id===AD}).color}
 function toast(m){var t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},2000)}
-function openModal(title,currentVal,onSave){document.getElementById("modal-title").textContent=title;document.getElementById("modal-date").value=currentVal||"";document.getElementById("modal-save").onclick=onSave;document.getElementById("modal").style.display="flex"}
+function openModal(title,cur,onSave){document.getElementById("modal-title").textContent=title;document.getElementById("modal-date").value=cur||"";document.getElementById("modal-save").onclick=onSave;document.getElementById("modal").style.display="flex"}
 function closeModal(){document.getElementById("modal").style.display="none"}
 function renderTabs(){document.getElementById("dogTabs").innerHTML=DOGS.map(function(d){var a=AD===d.id;return'<button class="dog-tab'+(a?" active":"")+'" style="'+(a?"background:"+d.color+";border-color:"+d.color+";":"")+'" onclick="sd(\''+d.id+'\')">'+d.emoji+" "+d.name+"</button>"}).join("")}
 function sd(id){AD=id;EV=null;render()}
@@ -128,12 +128,7 @@ c.innerHTML='<div style="font-size:18px;font-weight:700;margin-bottom:14px">📋
 function te(id){EV=EV===id?null:id;render()}
 function ce(){EV=null;render()}
 function sv(id){var inp=document.getElementById("di"+id);if(!inp||!inp.value)return;REC[AD].vaccines[id]=inp.value;save();EV=null;render();toast("✅ 保存しました")}
-function thm(m){
-var dog=DOGS.find(function(d){return d.id===AD});
-var cur=REC[AD].hw[m];
-if(cur){REC[AD].hw[m]="";save();render();return}
-openModal(MONTHS[m-1]+"の投与日",new Date().toISOString().split("T")[0],function(){var v=document.getElementById("modal-date").value;if(!v)return;REC[AD].hw[m]=v;save();closeModal();render();toast("✅ 保存しました")});
-}
+function thm(m){var cur=REC[AD].hw[m];if(cur){REC[AD].hw[m]="";save();render();return}openModal(MONTHS[m-1]+"の投与日",new Date().toISOString().split("T")[0],function(){var v=document.getElementById("modal-date").value;if(!v)return;REC[AD].hw[m]=v;save();closeModal();render();toast("✅ 保存しました")})}
 render();
 </script>
 </body>

@@ -4,67 +4,58 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🐾 わんこ健康手帳</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#FDF6EE;--card:#fff;--border:#EDE4D8;--text:#3D2C1E;--muted:#9B8272}
 body{background:var(--bg);font-family:'Zen Maru Gothic',sans-serif;color:var(--text)}
-.app{min-height:100vh;max-width:480px;margin:0 auto;padding:0 0 80px;background:var(--bg)}
-.header{background:var(--card);border-bottom:2px solid var(--border);padding:20px 20px 16px;position:sticky;top:0;z-index:100}
-.header-title{font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px}
-.dog-tabs{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
-.dog-tabs::-webkit-scrollbar{display:none}
-.dog-tab{flex:0 0 auto;padding:8px 16px;border-radius:20px;border:2px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;color:var(--muted);transition:all 0.2s}
-.dog-tab.active{color:white;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
-.alerts{margin:16px 16px 0}
-.alert-card{background:#FFF5F0;border:1.5px solid #FFD4B8;border-radius:12px;padding:12px 14px;margin-bottom:8px;font-size:13px;display:flex;align-items:center;gap:8px}
+.app{min-height:100vh;max-width:480px;margin:0 auto;padding:0 0 80px}
+.header{background:var(--card);border-bottom:2px solid var(--border);padding:20px;position:sticky;top:0;z-index:100}
+.header-title{font-size:20px;font-weight:700}
+.dog-tabs{display:flex;gap:8px;margin-top:12px;overflow-x:auto}
+.dog-tab{padding:8px 14px;border-radius:20px;border:2px solid var(--border);background:var(--bg);cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
+.dog-tab.active{color:#fff}
 .content{padding:16px}
-.section-tabs{display:flex;background:var(--border);border-radius:12px;padding:4px;margin-bottom:20px}
-.section-tab{flex:1;padding:10px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);transition:all 0.2s}
-.section-tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.vaccine-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
-.vaccine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.vaccine-name{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
-.vaccine-dates{display:flex;flex-direction:column;gap:6px;font-size:13px}
-.date-row{display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
+.section-tabs{display:flex;background:var(--border);border-radius:12px;padding:4px;margin-bottom:16px}
+.section-tab{flex:1;padding:10px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
+.section-tab.active{background:var(--card);color:var(--text)}
+.vaccine-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.vaccine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.vaccine-name{font-size:15px;font-weight:700}
+.vaccine-dates{font-size:13px;display:flex;flex-direction:column;gap:5px}
+.date-row{display:flex;justify-content:space-between;color:var(--muted)}
 .date-value{color:var(--text);font-weight:600}
-.edit-btn{color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif}
-.edit-form{margin-top:12px;padding-top:12px;border-top:1.5px solid var(--border);display:flex;gap:8px;align-items:center}
-.date-input{flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);background:var(--bg)}
-.save-btn{color:white;border:none;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;font-size:14px}
-.cancel-btn{background:var(--border);color:var(--muted);border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:14px}
-.hw-header{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;margin-bottom:16px}
-.hw-year{font-size:13px;color:var(--muted);font-weight:500}
-.hw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.hw-month{aspect-ratio:1;border-radius:14px;border:2px solid var(--border);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;gap:4px}
-.hw-month.done{color:white;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.edit-btn{color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.edit-form{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px}
+.date-input{flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px}
+.save-btn{color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+.cancel-btn{background:var(--border);color:var(--muted);border:none;border-radius:8px;padding:8px 10px;cursor:pointer}
+.hw-header{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.hw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hw-month{aspect-ratio:1;border-radius:12px;border:2px solid var(--border);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:2px}
+.hw-month.done{color:#fff}
 .hw-month.future{opacity:0.5}
 .hw-month-name{font-size:11px;font-weight:700}
-.hw-check{font-size:18px;line-height:1}
-.hw-month-label{font-size:10px;color:var(--muted);font-weight:500}
-.hw-month.done .hw-month-label{color:rgba(255,255,255,0.8)}
-.hw-month.done .hw-month-name{color:white}
-.hw-progress{margin-top:16px;background:var(--card);border-radius:12px;border:1.5px solid var(--border);padding:14px 16px}
-.hw-progress-label{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between}
-.hw-progress-bar{height:10px;background:var(--border);border-radius:99px;overflow:hidden}
-.hw-progress-fill{height:100%;border-radius:99px;transition:width 0.5s ease}
-.overview-list{display:flex;flex-direction:column;gap:10px}
-.overview-dog{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px}
-.overview-dog-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.overview-dot{width:12px;height:12px;border-radius:99px;flex-shrink:0}
-.overview-dog-name{font-weight:700;font-size:16px}
-.overview-items{display:flex;flex-direction:column;gap:5px}
-.overview-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
-.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
-.badge-ok{background:#E8F5E9;color:#388E3C}
-.badge-soon{background:#FFF3E0;color:#E65100}
-.badge-overdue{background:#FFEBEE;color:#C62828}
-.badge-unknown{background:var(--border);color:var(--muted)}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:white;padding:10px 20px;border-radius:20px;font-size:14px;font-weight:600;z-index:999;display:none}
-@keyframes toast-in{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--card);border-top:2px solid var(--border);display:flex;padding:8px 0 12px;z-index:100}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;font-size:10px;color:var(--muted);font-weight:700}
+.hw-check{font-size:16px}
+.hw-month-label{font-size:9px;color:var(--muted)}
+.hw-month.done .hw-month-label,.hw-month.done .hw-month-name{color:#fff}
+.hw-progress{margin-top:14px;background:var(--card);border-radius:12px;border:1.5px solid var(--border);padding:14px}
+.hw-progress-label{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.hw-bar{height:10px;background:var(--border);border-radius:99px;overflow:hidden}
+.hw-fill{height:100%;border-radius:99px}
+.ov-list{display:flex;flex-direction:column;gap:10px}
+.ov-dog{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px}
+.ov-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:700}
+.ov-dot{width:12px;height:12px;border-radius:50%}
+.ov-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:4px}
+.badge{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.b-ok{background:#E8F5E9;color:#388E3C}
+.b-soon{background:#FFF3E0;color:#E65100}
+.b-over{background:#FFEBEE;color:#C62828}
+.b-none{background:var(--border);color:var(--muted)}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;display:none;z-index:999}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--card);border-top:2px solid var(--border);display:flex;padding:8px 0 16px;z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-size:10px;color:var(--muted);font-weight:700}
 .nav-icon{font-size:22px}
 </style>
 </head>
@@ -74,41 +65,54 @@ body{background:var(--bg);font-family:'Zen Maru Gothic',sans-serif;color:var(--t
     <div class="header-title">🐾 わんこ健康手帳</div>
     <div class="dog-tabs" id="dogTabs"></div>
   </div>
-  <div class="alerts" id="alerts"></div>
+  <div id="alerts" style="padding:12px 16px 0"></div>
   <div class="content" id="content"></div>
   <div class="bottom-nav">
-    <button class="nav-btn" id="navVaccines" onclick="setTab('vaccines')"><span class="nav-icon">💉</span>ワクチン</button>
-    <button class="nav-btn" id="navHeartworm" onclick="setTab('heartworm')"><span class="nav-icon">💊</span>フィラリア</button>
-    <button class="nav-btn" id="navOverview" onclick="setTab('overview')"><span class="nav-icon">📋</span>一覧</button>
+    <button class="nav-btn" id="nV" onclick="setTab('vaccines')"><span class="nav-icon">💉</span>ワクチン</button>
+    <button class="nav-btn" id="nH" onclick="setTab('heartworm')"><span class="nav-icon">💊</span>フィラリア</button>
+    <button class="nav-btn" id="nO" onclick="setTab('overview')"><span class="nav-icon">📋</span>一覧</button>
   </div>
   <div class="toast" id="toast"></div>
 </div>
 <script>
 var DOGS=[{id:"koharu",name:"こはる",emoji:"🐕",color:"#E8956D"},{id:"noel",name:"Noël",emoji:"🐩",color:"#7EB8C9"},{id:"elmo",name:"エルモ",emoji:"🦮",color:"#C97EB8"},{id:"ralph",name:"ラルフ",emoji:"🐶",color:"#7EC97E"}];
-var VACCINES=[{id:"mixed",name:"混合ワクチン",icon:"💉",intervalMonths:12},{id:"rabies",name:"狂犬病",icon:"🔴",intervalMonths:12},{id:"leptospira",name:"レプトスピラ",icon:"🧬",intervalMonths:12}];
+var VACCINES=[{id:"mixed",name:"混合ワクチン",icon:"💉",im:12},{id:"rabies",name:"狂犬病",icon:"🔴",im:12},{id:"leptospira",name:"レプトスピラ",icon:"🧬",im:12}];
 var MONTHS=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
-var now=new Date(),currentYear=now.getFullYear(),currentMonth=now.getMonth()+1;
-function initRecords(){return Object.fromEntries(DOGS.map(function(d){return[d.id,{vaccines:Object.fromEntries(VACCINES.map(function(v){return[v.id,""]})),heartworm:Object.fromEntries(Array.from({length:12},function(_,i){return[i+1,false]}))}]}))}
-var records=(function(){try{var s=localStorage.getItem("dogHealthRecords");return s?JSON.parse(s):initRecords()}catch(e){return initRecords()}})();
-var activeDog=DOGS[0].id,activeTab="vaccines",editingVaccine=null;
-function save(){try{localStorage.setItem("dogHealthRecords",JSON.stringify(records))}catch(e){}}
-function formatDate(s){if(!s)return"未記録";var d=new Date(s+"T00:00:00");return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"}
-function nextDue(s,​​​​​​​​​​​​​​​​m){if(!s)return null;var d=new Date(s+"T00:00:00");d.setMonth(d.getMonth()+m);return d}
-function daysUntil(d){if(!d)return null;var t=new Date();t.setHours(0,0,0,0);return Math.round((d-t)/86400000)}
-function badgeHTML(days){if(days===null)return'<span class="badge badge-unknown">未記録</span>';if(days<0)return'<span class="badge badge-overdue">期限切れ '+Math.abs(days)+'日</span>';if(days<=30)return'<span class="badge badge-soon">あと'+days+'日</span>';return'<span class="badge badge-ok">あと'+days+'日</span>'}
-function dogColor(){return DOGS.find(function(d){return d.id===activeDog}).color}
-function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.style.display="block";t.style.animation="none";void t.offsetWidth;t.style.animation="toast-in 0.3s ease";setTimeout(function(){t.style.display="none"},2500)}
-function renderDogTabs(){document.getElementById("dogTabs").innerHTML=DOGS.map(function(d){return'<button class="dog-tab'+(activeDog===d.id?" active":"")+'" style="'+(activeDog===d.id?"background:"+d.color+";border-color:"+d.color+";":"")+'" onclick="selectDog(\''+d.id+'\')"><span>'+d.emoji+"</span>"+d.name+"</button>"}).join("")}
-function selectDog(id){activeDog=id;editingVaccine=null;render()}
-function renderAlerts(){var alerts=[];DOGS.forEach(function(d){var r=records[d.id];VACCINES.forEach(function(v){var due=nextDue(r.vaccines[v.id],v.intervalMonths),days=daysUntil(due);if(days!==null&&days<=30)alerts.push({dog:d,label:v.name,days:days})});if(!r.heartworm[currentMonth])alerts.push({dog:d,label:"フィラリア（"+MONTHS[currentMonth-1]+"）",days:0})});document.getElementById("alerts").innerHTML=alerts.slice(0,3).map(function(a){return'<div class="alert-card"><span>⚠️</span><span><strong>'+a.dog.name+"</strong>の"+a.label+(a.days<=0?"が未投与です":"の期限が近づいています（あと"+a.days+"日）")+"</span></div>"}).join("")}
-function setTab(tab){activeTab=tab;editingVaccine=null;render()}
-function render(){renderDogTabs();renderAlerts();["vaccines","heartworm","overview"].forEach(function(t){var b=document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1));b.style.color=activeTab===t?dogColor():""});var content=document.getElementById("content");var stabs='<div class="section-tabs"><button class="section-tab'+(activeTab==="vaccines"?" active":"")+'" onclick="setTab(\'vaccines\')">💉 ワクチン</button><button class="section-tab'+(activeTab==="heartworm"?" active":"")+'" onclick="setTab(\'heartworm\')">💊 フィラリア</button></div>';if(activeTab==="vaccines"){var dog=DOGS.find(function(d){return d.id===activeDog}),rec=records[activeDog];content.innerHTML=stabs+VACCINES.map(function(v){var ld=rec.vaccines[v.id],due=nextDue(ld,v.intervalMonths),days=daysUntil(due),dueStr=due?formatDate(due.toISOString().split("T")[0]):"—",isEd=editingVaccine===v.id;return'<div class="vaccine-card"><div class="vaccine-header"><div class="vaccine-name"><span>'+v.icon+"</span>"+v.name+'</div><button class="edit-btn" style="background:'+dog.color+'" onclick="toggleEdit(\''+v.id+'\')">'+( isEd?"✕ 閉じる":"記録する")+'</button></div><div class="vaccine-dates"><div class="date-row"><span>最終接種日</span><span class="date-value">'+formatDate(ld)+'</span></div><div class="date-row"><span>次回接種予定</span><span class="date-value">'+dueStr+'</span></div><div class="date-row"><span>状態</span>'+badgeHTML(days)+"</div></div>"+(isEd?'<div class="edit-form"><input type="date" class="date-input" id="di_'+v.id+'" value="'+(ld||"")+'"><button class="save-btn" style="background:'+dog.color+'" onclick="saveVaccine(\''+v.id+'\')">保存</button><button class="cancel-btn" onclick="cancelEdit()">✕</button></div>':"")+"</div>"}).join("")}else if(activeTab==="heartworm"){var dog=DOGS.find(function(d){return d.id===activeDog}),rec=records[activeDog];var given=Object.values(rec.heartworm).filter(Boolean).length,pct=Math.round(given/currentMonth*100);content.innerHTML=stabs+'<div class="hw-header"><span style="font-size:24px">'+dog.emoji+"</span>"+dog.name+'のフィラリア予防<span class="hw-year">'+currentYear+'年</span></div><div class="hw-grid">'+Array.from({length:12},function(_,i){var m=i+1,done=rec.heartworm[m],isCur=m===currentMonth,isFut=m>currentMonth&&!done,bg=done?"background:"+dog.color+";border-color:"+dog.color+";":isCur?"border-color:"+dog.color+";border-width:2.5px;":"";return'<button class="hw-month'+(done?" done":"")+(isCur?" current-month":"")+(isFut?" future":"")+'" style="'+bg+'" onclick="toggleHeartworm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+(done?"✅":"⭕")+'</span><span class="hw-month-label">'+(done?"投与済":isCur?"今月":"未投与")+"</span></button>"}).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:700">'+given+"/"+currentMonth+"ヶ月 ("+pct+'%)</span></div><div class="hw-progress-bar"><div class="hw-progress-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>'}else if(activeTab==="overview"){content.innerHTML='<div style="font-weight:700;font-size:18px;margin-bottom:16px">📋 全犬の状況確認</div><div class="overview-list">'+DOGS.map(function(d){var r=records[d.id],hw=r.heartworm[currentMonth];return'<div class="overview-dog"><div class="overview-dog-header"><div class="overview-dot" style="background:'+d.color+'"></div><span class="overview-dog-name">'+d.emoji+" "+d.name+'</span></div><div class="overview-items">'+VACCINES.map(function(v){var due=nextDue(r.vaccines[v.id],v.intervalMonths);return'<div class="overview-item"><span>'+v.icon+" "+v.name+"</span>"+badgeHTML(daysUntil(due))+"</div>"}).join("")+'<div class="overview-item"><span>💊 フィラリア（今月）</span><span class="badge '+(hw?"badge-ok":"badge-soon")+'">'+(hw?"投与済":"未投与")+"</span></div></div></div>"}).join("")+"</div>"}}
-function toggleEdit(id){editingVaccine=editingVaccine===id?null:id;render()}
-function cancelEdit(){editingVaccine=null;render()}
-function saveVaccine(id){var inp=document.getElementById("di_"+id);if(!inp||!inp.value)return;records[activeDog].vaccines[id]=inp.value;save();editingVaccine=null;render();showToast("✅ 記録を保存しました")}
-function toggleHeartworm(m){records[activeDog].heartworm[m]=!records[activeDog].heartworm[m];save();render()}
+var now=new Date(),CY=now.getFullYear(),CM=now.getMonth()+1;
+function initR(){return Object.fromEntries(DOGS.map(function(d){return[d.id,{vaccines:Object.fromEntries(VACCINES.map(function(v){return[v.id,""]})),hw:Object.fromEntries(Array.from({length:12},function(_,i){return[i+1,false]}))}]}))}
+var REC=(function(){try{var s=localStorage.getItem("wanko");return s?JSON.parse(s):initR()}catch(e){return initR()}})();
+var AD=DOGS[0].id,AT="vaccines",EV=null;
+function save(){try{localStorage.setItem("wanko",JSON.stringify(REC))}catch(e){}}
+function fd(s){if(!s)return"未記録";var d=new Date(s+"T00:00:00");return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"}
+function nd(s,m){if(!s)return null;var d=new Date(s+"T00:00:00");d.setMonth(d.getMonth()+m);return d}
+function du(d){if(!d)return null;var t=new Date();t.setHours(0,0,0,0);return Math.round((d-t)/86400000)}
+function bh(days){if(days===null)return'<span class="badge b-none">未記録</span>';if(days<0)return'<span class="badge b-over">期限切れ</span>';if(days<=30)return'<span class="badge b-soon">あと'+days+'日</span>';return'<span class="badge b-ok">あと'+days+'日</span>'}
+function dc(){return DOGS.find(function(d){return d.id===AD}).color}
+function toast(m){var t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},2000)}
+function renderTabs(){document.getElementById("dogTabs").innerHTML=DOGS.map(function(d){var a=AD===d.id;return'<button class="dog-tab'+(a?" active":"")+'" style="'+(a?"background:"+d.color+";border-color:"+d.color+";":"")+'" onclick="sd(\''+d.id+'\')">'+d.emoji+" "+d.name+"</button>"}).join("")}
+function sd(id){AD=id;EV=null;render()}
+function renderAlerts(){var al=[];DOGS.forEach(function(d){var r=REC[d.id];VACCINES.forEach(function(v){var due=nd(r.vaccines[v.id],v.im),days=du(due);if(days!==null&&days<=30)al.push(d.name+"の"+v.name+"（あと"+days+"日）")});if(!r.hw[CM])al.push(d.name+"のフィラリア未投与")});document.getElementById("alerts").innerHTML=al.slice(0,3).map(function(a){return'<div style="background:#FFF5F0;border:1.5px solid #FFD4B8;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:13px">⚠️ '+a+"</div>"}).join("")}
+function setTab(t){AT=t;EV=null;render()}
+function render(){
+renderTabs();renderAlerts();
+var dog=DOGS.find(function(d){return d.id===AD});
+["nV","nH","nO"].forEach(function(id,i){document.getElementById(id).style.color=["vaccines","heartworm","overview"][i]===AT?dc():""});
+var c=document.getElementById("content");
+var st='<div class="section-tabs"><button class="section-tab'+(AT==="vaccines"?" active":"")+'" onclick="setTab(\'vaccines\')">💉 ワクチン</button><button class="section-tab'+(AT==="heartworm"?" active":"")+'" onclick="setTab(\'heartworm\')">💊 フィラリア</button></div>';
+if(AT==="vaccines"){
+var r=REC[AD];
+c.innerHTML=st+VACCINES.map(function(v){var ld=r.vaccines[v.id],due=nd(ld,v.im),days=du(due),ds=due?fd(due.toISOString().split("T")[0]):"—",ed=EV===v.id;return'<div class="vaccine-card"><div class="vaccine-header"><div class="vaccine-name">'+v.icon+" "+v.name+'</div><button class="edit-btn" style="background:'+dog.color+'" onclick="te(\''+v.id+'\')">'+( ed?"✕ 閉じる":"記録する")+'</button></div><div class="vaccine-dates"><div class="date-row"><span>最終接種日</span><span class="date-value">'+fd(ld)+'</span></div><div class="date-row"><span>次回予定</span><span class="date-value">'+ds+'</span></div><div class="date-row"><span>状態</span>'+bh(days)+"</div></div>"+(ed?'<div class="edit-form"><input type="date" class="date-input" id="di'+v.id+'" value="'+(ld||"")+'"><button class="save-btn" style="background:'+dog.color+'" onclick="sv(\''+v.id+'\')">保存</button><button class="cancel-btn" onclick="ce()">✕</button></div>':"")+"</div>"}).join("");
+}else if(AT==="heartworm"){
+var r=REC[AD];var gv=Object.values(r.hw).filter(Boolean).length,pct=Math.round(gv/CM*100);
+c.innerHTML=st+'<div class="hw-header">'+dog.emoji+" "+dog.name+'のフィラリア予防 <span style="font-size:13px;color:var(--muted)">'+CY+'年</span></div><div class="hw-grid">'+Array.from({length:12},function(_,i){var m=i+1,done=r.hw[m],ic=m===CM,ifu=m>CM&&!done,bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";return'<button class="hw-month'+(done?" done":"")+(ifu?" future":"")+'" style="'+bg+'" onclick="th('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+(done?"✅":"⭕")+'</span><span class="hw-month-label">'+(done?"済":ic?"今月":"未")+"</span></button>"}).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:700">'+gv+"/"+CM+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
+}else{
+c.innerHTML='<div style="font-size:18px;font-weight:700;margin-bottom:14px">📋 全犬の状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM];return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var due=nd(r.vaccines[v.id],v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span><span class="badge '+(hw?"b-ok":"b-soon")+'">'+(hw?"投与済":"未投与")+"</span></div></div>"}).join("")+"</div>";
+}}
+function te(id){EV=EV===id?null:id;render()}
+function ce(){EV=null;render()}
+function sv(id){var inp=document.getElementById("di"+id);if(!inp||!inp.value)return;REC[AD].vaccines[id]=inp.value;save();EV=null;render();toast("✅ 保存しました")}
+function th(m){REC[AD].hw[m]=!REC[AD].hw[m];save();render()}
 render();
 </script>
 </body>
 </html>
-

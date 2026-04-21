@@ -113,7 +113,7 @@ function closeModal(){document.getElementById("modal").style.display="none"}
 function renderTabs(){document.getElementById("dogTabs").innerHTML=DOGS.map(function(d){var a=AD===d.id;return'<button class="dog-tab'+(a?" active":"")+'" style="'+(a?"background:"+d.color+";border-color:"+d.color+";":"")+'" onclick="sd(\''+d.id+'\')">'+d.emoji+" "+d.name+"</button>"}).join("")}
 function sd(id){AD=id;EV=null;render()}
 function latestVax(dogId,vid){var arr=REC[dogId].vaccines[vid];if(!arr||!arr.length)return null;return arr.slice().sort().pop()}
-function renderAlerts(){var al=[];DOGS.forEach(function(d){var r=REC[d.id];VACCINES.forEach(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im),days=du(due);if(days!==null&&days<=30)al.push(d.name+"の"+v.name+"（あと"+days+"日）")});if(!r.hw[CM])al.push(d.name+"のフィラリア（"+MONTHS[CM-1]+"）未投与")});document.getElementById("alerts").innerHTML=al.slice(0,3).map(function(a){return'<div style="background:#FFF5F0;border:1.5px solid #FFD4B8;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:13px">⚠️ '+a+"</div>"}).join("")}
+function renderAlerts(){var al=[];DOGS.forEach(function(d){var r=REC[d.id];VACCINES.forEach(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im),days=du(due);if(days!==null&&days<=30)al.push(d.name+"の"+v.name+"（あと"+days+"日）")});if(!r.hw[CM])al.push(d.name+"のフィラリア（"+MONTHS[CM-1]+"）未投与")});document.getElementById("alerts").innerHTML=al.slice(0,4).map(function(a){return'<div style="background:#FFF5F0;border:1.5px solid #FFD4B8;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:13px">⚠️ '+a+"</div>"}).join("")}
 function setTab(t){AT=t;EV=null;render()}
 function render(){
 renderTabs();renderAlerts();

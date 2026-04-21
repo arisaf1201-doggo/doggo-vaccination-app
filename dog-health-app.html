@@ -1,1 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐾 わんこ健康手帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #FDF6EE;
+    --card: #FFFFFF;
+    --border: #EDE4D8;
+    --text: #3D2C1E;
+    --muted: #9B8272;
+    --dog-color: #E8956D;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Zen Maru Gothic', 'Nunito', sans-serif;
+    color: var(--text);
+  }
+
+  .app {
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 0 80px;
+    background: var(--bg);
+  }
+
+  .header {
+    background: var(--card);
+    border-bottom: 2px solid var(--border);
+    padding: 20px 20px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dog-tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .dog-tabs::-webkit-scrollbar { display: none; }
+  .dog-tab {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+  }
+  .dog-tab.active {
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .alerts { margin: 16px 16px 0; }
+  .alert-card {
+    background: #FFF5F0;
+    border: 1.5px solid #FFD4B8;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .content { padding: 16px; }
+
+  .section-tabs {
+    display: flex;
+    background: var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+  .section-tab {
+    flex: 1;
+    padding: 10px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .section-tab.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .vaccine-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .vaccine-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .vaccine-name {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .vaccine-icon { font-size: 20px; }
+  .vaccine-dates { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+  .date-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+  }
+  .date-value { color: var(--text); font-weight: 600; }
+  .edit-btn {
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .edit-btn:hover { opacity: 0.85; }
+
+  .edit-form {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1.5px solid var(--border);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .date-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+  }
+  .save-btn {
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+  }
+  .cancel-btn {
+    background: var(--border);
+    color: var(--muted);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+  }
+
+  .hw-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .hw-year { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .hw-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .hw-month {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 4px;
+  }
+  .hw-month.done { color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .hw-month.future { opacity: 0.5; }
+  .hw-month-name { font-size: 11px; font-weight: 700; }
+  .hw-check { font-size: 18px; line-height: 1; }
+  .hw-month-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+  .hw-month.done .hw-month-label { color: rgba(255,255,255,0.8); }
+  .hw-month.done .hw-month-name { color: white; }
+
+  .hw-progress {
+    margin-top: 16px;
+    background: var(--card);
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    padding: 14px 16px;
+  }
+  .hw-progress-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .hw-progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .hw-progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+
+  .overview-list { display: flex; flex-direction: column; gap: 10px; }
+  .overview-dog {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .overview-dog-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .overview-dot { width: 12px; height: 12px; border-radius: 99px; flex-shrink: 0; }
+  .overview-dog-name { font-weight: 700; font-size: 16px; }
+  .overview-items { display: flex; flex-direction: column; gap: 5px; }
+  .overview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .badge-ok { background: #E8F5E9; color: #388E3C; }
+  .badge-soon { background: #FFF3E0; color: #E65100; }
+  .badge-overdue { background: #FFEBEE; color: #C62828; }
+  .badge-unknown { background: var(--border); color: var(--muted); }
+
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 999;
+    animation: toast-in 0.3s ease;
+    display: none;
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: var(--card);
+    border-top: 2px solid var(--border);
+    display: flex;
+    padding: 8px 0 12px;
+    z-index: 100;
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size:
 

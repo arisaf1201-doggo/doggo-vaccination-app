@@ -188,7 +188,7 @@ function renderAlerts(){
     VACCINES.forEach(function(v){
       var ld=latestVax(d.id,v.id),due=nd(ld,v.im),days=du(due);
       if(days===null||days<=60){
-        var val=due?fds(due.toISOString().split("T")[0])+"（あと"+days+"日）":"未記録";
+        var val=due?(days<0?'<span style="color:#C62828;font-weight:700">⚠️'+Math.abs(days)+'日過ぎています⚠️</span>':fds(due.toISOString().split("T")[0])+"（あと"+days+"日）"):"未記録";
         items.push({label:v.icon+" "+v.name,val:val});
       }
     });

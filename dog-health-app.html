@@ -32,12 +32,13 @@ body{background:var(--bg);font-family:'Zen Maru Gothic',sans-serif;color:var(--t
 .cancel-btn{background:var(--border);color:var(--muted);border:none;border-radius:8px;padding:8px 10px;cursor:pointer}
 .hw-header{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .hw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.hw-month{aspect-ratio:1;border-radius:12px;border:2px solid var(--border);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:2px;padding:4px}
+.hw-month{aspect-ratio:1;border-radius:12px;border:2px solid var(--border);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:1px;padding:4px}
 .hw-month.done{color:#fff}
 .hw-month.future{opacity:0.5}
 .hw-month-name{font-size:11px;font-weight:700}
 .hw-check{font-size:16px}
 .hw-month-date{font-size:9px;color:var(--muted)}
+.hw-month-due{font-size:8px;color:#E65100}
 .hw-month.done .hw-month-date,.hw-month.done .hw-month-name{color:rgba(255,255,255,0.9)}
 .hw-progress{margin-top:14px;background:var(--card);border-radius:12px;border:1.5px solid var(--border);padding:14px}
 .hw-progress-label{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
@@ -89,7 +90,7 @@ body{background:var(--bg);font-family:'Zen Maru Gothic',sans-serif;color:var(--t
   </div>
 </div>
 <script>
-var DOGS=[{id:"koharu",name:"こはる",emoji:"🐕",color:"#E8956D"},{id:"noel",name:"Noël",emoji:"🐩",color:"#7EB8C9"},{id:"elmo",name:"エルモ",emoji:"🦮",color:"#C97EB8"},{id:"ralph",name:"ラルフ",emoji:"🐶",color:"#7EC97E"}];
+var DOGS=[{id:"koharu",name:"こはる",emoji:"🐕",color:"#E8956D"},{id:"noel",name:"Noël",emoji:"🐕‍🦺",color:"#7EB8C9"},{id:"elmo",name:"エルモ",emoji:"🐩",color:"#C97EB8"},{id:"ralph",name:"ラルフ",emoji:"🐶",color:"#7EC97E"}];
 var VACCINES=[{id:"mixed",name:"混合ワクチン",icon:"💉",im:12},{id:"rabies",name:"狂犬病",icon:"🔴",im:12}];
 var MONTHS=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
 var now=new Date(),CY=now.getFullYear(),CM=now.getMonth()+1;
@@ -104,11 +105,13 @@ function du(d){if(!d)return null;var t=new Date();t.setHours(0,0,0,0);return Mat
 function bh(days){if(days===null)return'<span class="badge b-none">未記録</span>';if(days<0)return'<span class="badge b-over">期限切れ</span>';if(days<=30)return'<span class="badge b-soon">あと'+days+'日</span>';return'<span class="badge b-ok">あと'+days+'日</span>'}
 function dc(){return DOGS.find(function(d){return d.id===AD}).color}
 function toast(m){var t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},2000)}
-function openModal(title,cur,onSave){document.getElementById("modal-title").textContent=title;document.getElementById("modal-date").value=cur||"";document.getElementById("modal-save").onclick=onSave;document.getElementById("modal").style.display="flex"}
+function openModal(title,cur,onSave){var dog=DOGS.find(function(d){return d.id===AD});document.getElementById("modal-title").textContent=title;document.getElementById("modal-date").value=cur||"";var sb=document.getElementById("modal-save");sb.style.background=dog.color;sb.onclick=onSave;document.getElementById("modal").style.display="flex"}
 function closeModal(){document.getElementById("modal").style.display="none"}
 function renderTabs(){document.getElementById("dogTabs").innerHTML=DOGS.map(function(d){var a=AD===d.id;return'<button class="dog-tab'+(a?" active":"")+'" style="'+(a?"background:"+d.color+";border-color:"+d.color+";":"")+'" onclick="sd(\''+d.id+'\')">'+d.emoji+" "+d.name+"</button>"}).join("")}
 function sd(id){AD=id;EV=null;render()}
-function renderAlerts(){var al=[];DOGS.forEach(function(d){var r=REC[d.id];VACCINES.forEach(function(v){var due=nd(r.vaccines[v.id],v.im),days=du(due);if(days!==null&&days<=30)al.push(d.name+"の"+v.name+"（あと"+days+"日）")});if(!r.hw[CM])al.push(d.name+"のフィラリア（"+MONTHS[CM-1]+"）未投与")});document.getElementById("alerts").innerHTML=al.slice(0,3).map(function(a){return'<div style="background:#FFF5F0;border:1.5px solid #FFD4B8;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:13px">⚠️ '+a+"</div>"}).join("")}
+function prevHwDate(dogId){var r=REC[dogId];for(var m=CM-1;m>=1;m--){if(r.hw[m])return r.hw[m]}return null}
+function hwDueDate(dogId){var prev=prevHwDate(dogId);if(!prev)return null;return nd(prev,1)}
+function renderAlerts(){var al=[];DOGS.forEach(function(d){var r=REC[d.id];VACCINES.forEach(function(v){var due=nd(r.vaccines[v.id],v.im),days=du(due);if(days!==null&&days<=30)al.push(d.name+"の"+v.name+"（あと"+days+"日）")});if(!r.hw[CM]){var due=hwDueDate(d.id),days=du(due);var msg=d.name+"のフィラリア（"+MONTHS[CM-1]+"）未投与";if(due){if(days<0)msg+=" 期限切れ";else msg+=" 期限:"+fds(due.toISOString().split("T")[0])}al.push(msg)}});document.getElementById("alerts").innerHTML=al.slice(0,3).map(function(a){return'<div style="background:#FFF5F0;border:1.5px solid #FFD4B8;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:13px">⚠️ '+a+"</div>"}).join("")}
 function setTab(t){AT=t;EV=null;render()}
 function render(){
 renderTabs();renderAlerts();
@@ -121,7 +124,7 @@ var r=REC[AD];
 c.innerHTML=st+VACCINES.map(function(v){var ld=r.vaccines[v.id],due=nd(ld,v.im),days=du(due),ds=due?fd(due.toISOString().split("T")[0]):"—",ed=EV===v.id;return'<div class="vaccine-card"><div class="vaccine-header"><div class="vaccine-name">'+v.icon+" "+v.name+'</div><button class="edit-btn" style="background:'+dog.color+'" onclick="te(\''+v.id+'\')">'+( ed?"✕ 閉じる":"記録する")+'</button></div><div class="vaccine-dates"><div class="date-row"><span>最終接種日</span><span class="date-value">'+fd(ld)+'</span></div><div class="date-row"><span>次回予定</span><span class="date-value">'+ds+'</span></div><div class="date-row"><span>状態</span>'+bh(days)+"</div></div>"+(ed?'<div class="edit-form"><input type="date" class="date-input" id="di'+v.id+'" value="'+(ld||"")+'"><button class="save-btn" style="background:'+dog.color+'" onclick="sv(\''+v.id+'\')">保存</button><button class="cancel-btn" onclick="ce()">✕</button></div>':"")+"</div>"}).join("");
 }else if(AT==="heartworm"){
 var r=REC[AD];var gv=Object.values(r.hw).filter(Boolean).length,pct=Math.round(gv/CM*100);
-c.innerHTML=st+'<div class="hw-header">'+dog.emoji+" "+dog.name+'のフィラリア予防 <span style="font-size:13px;color:var(--muted)">'+CY+'年</span></div><div class="hw-grid">'+Array.from({length:12},function(_,i){var m=i+1,date=r.hw[m],done=!!date,ic=m===CM,ifu=m>CM&&!done,bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";return'<button class="hw-month'+(done?" done":"")+(ifu?" future":"")+'" style="'+bg+'" onclick="thm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+(done?"✅":"⭕")+'</span><span class="hw-month-date">'+(done?fds(date):(ic?"今月":"未投与"))+"</span></button>"}).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:700">'+gv+"/"+CM+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
+c.innerHTML=st+'<div class="hw-header">'+dog.emoji+" "+dog.name+'のフィラリア予防 <span style="font-size:13px;color:var(--muted)">'+CY+'年</span></div><div class="hw-grid">'+Array.from({length:12},function(_,i){var m=i+1,date=r.hw[m],done=!!date,ic=m===CM,ifu=m>CM&&!done,bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";var dueStr="";if(!done&&m<=CM){var prev=r.hw[m-1];if(prev){var due=nd(prev,1);var days=du(due);dueStr=days<0?"期限切れ":"期限:"+fds(due.toISOString().split("T")[0])}}return'<button class="hw-month'+(done?" done":"")+(ifu?" future":"")+'" style="'+bg+'" onclick="thm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+(done?"✅":"⭕")+'</span><span class="hw-month-date">'+(done?fds(date):(ic?"今月":"未投与"))+'</span>'+(dueStr?'<span class="hw-month-due">'+dueStr+"</span>":"")+"</button>"}).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:700">'+gv+"/"+CM+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
 }else{
 c.innerHTML='<div style="font-size:18px;font-weight:700;margin-bottom:14px">📋 全犬の状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM];return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var due=nd(r.vaccines[v.id],v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span><span class="badge '+(hw?"b-ok":"b-soon")+'">'+(hw?"投与済":"未投与")+"</span></div></div>"}).join("")+"</div>";
 }}

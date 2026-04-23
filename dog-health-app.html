@@ -4,27 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🐾 わんこ健康手帳</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#F0F4FF;--card:#fff;--border:#E4E8F5;--text:#2D2D3F;--muted:#8B90A8}
-body{background:var(--bg);font-family:'Fredoka',sans-serif;color:var(--text);background-image:radial-gradient(ellipse at 20% 0%,#FFE4F0 0%,transparent 50%),radial-gradient(ellipse at 80% 0%,#E0EAFF 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,#E8FFF4 0%,transparent 60%)}
+body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);background-image:radial-gradient(ellipse at 20% 0%,#FFE4F0 0%,transparent 50%),radial-gradient(ellipse at 80% 0%,#E0EAFF 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,#E8FFF4 0%,transparent 60%)}
 .app{min-height:100vh;max-width:480px;margin:0 auto;padding:0 0 80px}
 .header{background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--border);padding:20px;position:sticky;top:0;z-index:100}
 .header-title{font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:space-between;letter-spacing:-0.3px}
 .sync-status{font-size:11px;color:var(--muted);font-weight:600}
 .dog-tabs{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .dog-tabs::-webkit-scrollbar{display:none}
-.dog-tab{padding:8px 16px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-family:'Fredoka',sans-serif}
+.dog-tab{padding:8px 16px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-family:'Yomogi',sans-serif}
 .dog-tab.active{color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
 .content{padding:16px}
 .section-tabs{display:flex;background:rgba(255,255,255,0.7);border:1.5px solid var(--border);border-radius:14px;padding:4px;margin-bottom:18px;gap:4px}
-.section-tab{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;cursor:pointer;font-family:'Fredoka',sans-serif;font-size:13px;font-weight:800;color:var(--muted);transition:all 0.2s}
+.section-tab{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;cursor:pointer;font-family:'Yomogi',sans-serif;font-size:13px;font-weight:800;color:var(--muted);transition:all 0.2s}
 .section-tab.active{background:#fff;color:var(--text);box-shadow:0 2px 12px rgba(0,0,0,0.08)}
 .vaccine-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:0 2px 16px rgba(0,0,0,0.05)}
 .vaccine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .vaccine-name{font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px}
-.edit-btn{color:#fff;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Fredoka',sans-serif}
+.edit-btn{color:#fff;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Yomogi',sans-serif}
 .history-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
 .history-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:10px 12px;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
 .history-date{color:var(--text);font-weight:700}
@@ -33,11 +33,11 @@ body{background:var(--bg);font-family:'Fredoka',sans-serif;color:var(--text);bac
 .del-btn{background:none;border:none;color:#CDD0E0;cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0}
 .add-form{margin-top:10px;padding-top:12px;border-top:1.5px dashed var(--border)}
 .add-form-row{display:flex;gap:8px;margin-bottom:8px}
-.date-input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Fredoka',sans-serif;font-weight:600;color:var(--text);background:#fff}
-.text-input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Fredoka',sans-serif;font-weight:600;color:var(--text);background:#fff}
+.date-input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Yomogi',sans-serif;font-weight:600;color:var(--text);background:#fff}
+.text-input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Yomogi',sans-serif;font-weight:600;color:var(--text);background:#fff}
 .add-form-btns{display:flex;gap:8px}
-.save-btn{color:#fff;border:none;border-radius:10px;padding:9px 16px;font-weight:800;cursor:pointer;font-family:'Fredoka',sans-serif;font-size:14px}
-.cancel-btn{background:var(--border);color:var(--muted);border:none;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;font-family:'Fredoka',sans-serif;font-size:14px}
+.save-btn{color:#fff;border:none;border-radius:10px;padding:9px 16px;font-weight:800;cursor:pointer;font-family:'Yomogi',sans-serif;font-size:14px}
+.cancel-btn{background:var(--border);color:var(--muted);border:none;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;font-family:'Yomogi',sans-serif;font-size:14px}
 .status-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-weight:600}
 .alert-dog-card{border-radius:16px;padding:12px 16px;margin-bottom:10px;font-size:13px}
 .alert-dog-name{font-weight:900;margin-bottom:8px;font-size:14px;display:flex;align-items:center;gap:6px}
@@ -73,7 +73,7 @@ body{background:var(--bg);font-family:'Fredoka',sans-serif;color:var(--text);bac
 .b-none{background:var(--border);color:var(--muted)}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(30,30,60,0.9);color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:700;display:none;z-index:999}
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);border-top:1.5px solid var(--border);display:flex;padding:8px 0 16px;z-index:100}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-family:'Fredoka',sans-serif;font-size:10px;color:var(--muted);font-weight:800;transition:color 0.2s}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-family:'Yomogi',sans-serif;font-size:10px;color:var(--muted);font-weight:800;transition:color 0.2s}
 .nav-icon{font-size:22px}
 .loading{display:flex;align-items:center;justify-content:center;height:200px;font-size:14px;color:var(--muted);font-weight:700}
 </style>

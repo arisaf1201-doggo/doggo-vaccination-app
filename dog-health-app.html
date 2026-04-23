@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐾 わんこ健康手帳</title>
+<title>🐾 福間家イヌズ健康手帳</title>
 <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -49,6 +49,7 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
 .hw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .hw-month{aspect-ratio:1;border-radius:16px;border:2px solid var(--border);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:2px;padding:4px;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
 .hw-month.done{border-color:transparent;box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+.hw-month.skip{background:#F5F5F5;border-color:#DDD}
 .hw-month.future{opacity:0.4}
 .hw-month-name{font-size:11px;font-weight:800}
 .hw-check{font-size:16px;line-height:1}
@@ -69,7 +70,7 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
 .modal-bg{position:fixed;inset:0;background:rgba(30,30,60,0.35);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center}
 .modal{background:#fff;border-radius:24px;padding:28px;width:88%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
 .modal-title{font-size:16px;font-weight:900;margin-bottom:16px}
-.modal-btns{display:flex;gap:8px;margin-top:16px}
+.modal-btns{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 .ov-list{display:flex;flex-direction:column;gap:10px}
 .ov-dog{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
 .ov-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-weight:900;font-size:15px}
@@ -80,6 +81,7 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
 .b-soon{background:#FFF4E0;color:#FF9500}
 .b-over{background:#FFE8EC;color:#FF3860}
 .b-none{background:var(--border);color:var(--muted)}
+.b-skip{background:#F0F0F0;color:#999}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(30,30,60,0.9);color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:700;display:none;z-index:999}
 .loading{display:flex;align-items:center;justify-content:center;height:200px;font-size:14px;color:var(--muted);font-weight:700}
 </style>
@@ -88,7 +90,7 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
 <div class="app">
   <div class="header">
     <div class="header-title">
-      🐾 わんこ健康手帳
+      🐾 福間家イヌズ健康手帳
       <span class="sync-status" id="syncStatus">接続中...</span>
     </div>
     <div class="dog-tabs" id="dogTabs"></div>
@@ -101,6 +103,7 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
       <input type="date" class="date-input" id="modal-date" style="width:100%;margin-bottom:10px">
       <div class="modal-btns">
         <button class="save-btn" id="modal-save" style="flex:1">保存</button>
+        <button class="save-btn" id="modal-skip" style="flex:1;background:#8B90A8">不要</button>
         <button class="cancel-btn" onclick="closeModal()">✕</button>
       </div>
     </div>
@@ -157,7 +160,19 @@ function nd(s,m){if(!s)return null;var d=new Date(s+"T00:00:00");d.setMonth(d.ge
 function du(d){if(!d)return null;var t=new Date();t.setHours(0,0,0,0);return Math.round((d-t)/86400000)}
 function bh(days){if(days===null)return'<span class="badge b-none">未記録</span>';if(days<0)return'<span class="badge b-over">期限切れ</span>';if(days<=30)return'<span class="badge b-soon">あと'+days+'日</span>';return'<span class="badge b-ok">あと'+days+'日</span>'}
 function toast(m){var t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},2000)}
-function openModal(title,cur,onSave){var dog=DOGS.find(function(d){return d.id===AD});document.getElementById("modal-title").textContent=title;document.getElementById("modal-date").value=cur||"";var sb=document.getElementById("modal-save");sb.style.background=dog?dog.color:"#5B6AF0";sb.onclick=onSave;document.getElementById("modal").style.display="flex"}
+
+function openHwModal(m){
+  var dog=DOGS.find(function(d){return d.id===AD});
+  document.getElementById("modal-title").textContent=MONTHS[m-1]+"の投与日";
+  document.getElementById("modal-date").value=new Date().toISOString().split("T")[0];
+  var sb=document.getElementById("modal-save");
+  sb.style.background=dog.color;
+  sb.onclick=async function(){var v=document.getElementById("modal-date").value;if(!v)return;REC[AD].hw[m]=v;await save();closeModal();render();toast("✅ 保存しました")};
+  var sk=document.getElementById("modal-skip");
+  sk.onclick=async function(){REC[AD].hw[m]="skip";await save();closeModal();render();toast("✅ 不要として記録しました")};
+  document.getElementById("modal").style.display="flex";
+}
+
 function closeModal(){document.getElementById("modal").style.display="none"}
 window.closeModal=closeModal;
 
@@ -181,7 +196,7 @@ function renderAlerts(){
   var html="";
   DOGS.forEach(function(d){
     var items=[];var r=REC[d.id];
-    if(!r.hw[CM]){var prev=r.hw[CM-1];var due=prev?nd(prev,1):null;var dueStr=due?fds(due.toISOString().split("T")[0]):"未投与";items.push({label:"💊 フィラリア",val:dueStr+(due&&du(due)<0?" 期限切れ":"")})}
+    if(!r.hw[CM]){var prev=r.hw[CM-1];var due=prev&&prev!=="skip"?nd(prev,1):null;var dueStr=due?fds(due.toISOString().split("T")[0]):"未投与";items.push({label:"💊 フィラリア",val:dueStr+(due&&du(due)<0?" 期限切れ":"")})}
     VACCINES.forEach(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im),days=du(due);if(days===null||days<=60){var val=due?(days<0?'<span style="color:#C62828;font-weight:800">⚠️'+Math.abs(days)+'日過ぎています⚠️</span>':fds(due.toISOString().split("T")[0])+"（あと"+days+"日）"):"未記録";items.push({label:v.icon+" "+v.name,val:val})}});
     if(items.length)html+='<div class="alert-dog-card" style="background:'+d.color+'18;border:1.5px solid '+d.color+'44"><div class="alert-dog-name" style="color:'+d.color+'">⚠️ '+d.emoji+" "+d.name+'</div>'+items.map(function(it){return'<div class="alert-item"><span class="alert-label">'+it.label+'</span><span>'+it.val+"</span></div>"}).join("")+"</div>";
   });
@@ -210,7 +225,7 @@ function render(){
   var c=document.getElementById("content");
 
   if(AD==="overview"){
-    c.innerHTML='<div style="font-size:18px;font-weight:900;margin-bottom:14px">📋 みんなの状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM],ws=(r.weight||[]);var lw=ws.length?ws.slice().sort(function(a,b){return b.date.localeCompare(a.date)})[0]:null;return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span><span class="badge '+(hw?"b-ok":"b-soon")+'">'+(hw?"投与済":"未投与")+'</span></div><div class="ov-item"><span>⚖️ 体重</span><span style="font-weight:800;color:'+d.color+'">'+(lw?lw.kg+"kg":"未記録")+"</span></div></div>"}).join("")+"</div>";
+    c.innerHTML='<div style="font-size:18px;font-weight:900;margin-bottom:14px">📋 みんなの状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM],ws=(r.weight||[]);var lw=ws.length?ws.slice().sort(function(a,b){return b.date.localeCompare(a.date)})[0]:null;var hwBadge=hw==="skip"?'<span class="badge b-skip">不要</span>':hw?'<span class="badge b-ok">投与済</span>':'<span class="badge b-soon">未投与</span>';return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span>'+hwBadge+'</div><div class="ov-item"><span>⚖️ 体重</span><span style="font-weight:800;color:'+d.color+'">'+(lw?lw.kg+"kg":"未記録")+"</span></div></div>"}).join("")+"</div>";
     return;
   }
 
@@ -223,8 +238,17 @@ function render(){
     return'<div class="vaccine-card"><div class="vaccine-header"><div class="vaccine-name">'+v.icon+" "+v.name+'</div><button class="edit-btn" style="background:'+dog.color+'" onclick="te(\''+v.id+'\')">'+( ed?"✕ 閉じる":"＋ 追加")+'</button></div><div class="history-list">'+histHTML+'</div>'+(arr.length?'<div class="status-row"><span>次回予定</span>'+bh(days)+'</div>':"")+(ed?'<div class="add-form"><div class="add-form-row"><input type="date" class="date-input" id="di'+v.id+'" placeholder="接種日"></div>'+(v.hasType?'<div class="add-form-row"><input type="text" class="text-input" id="dt'+v.id+'" placeholder="種類（例：コアワクチン5種）"></div>':"")+'<div class="add-form-btns"><button class="save-btn" style="background:'+dog.color+'" onclick="sv(\''+v.id+'\')">保存</button><button class="cancel-btn" onclick="ce()">✕</button></div></div>':"")+"</div>"
   }).join("");
 
-  var gv=Object.values(r.hw).filter(Boolean).length,pct=Math.round(gv/CM*100);
-  var hwHTML='<div class="hw-grid">'+Array.from({length:12},function(_,i){var m=i+1,date=r.hw[m],done=!!date,ic=m===CM,ifu=m>CM&&!done,bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";var dueStr="";if(!done&&m<=CM){var prev=r.hw[m-1];if(prev){var due=nd(prev,1);var days=du(due);dueStr=days<0?"期限切れ":"期限:"+fds(due.toISOString().split("T")[0])}}return'<button class="hw-month'+(done?" done":"")+(ifu?" future":"")+'" style="'+bg+'" onclick="thm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+(done?"✅":"⭕")+'</span><span class="hw-month-date">'+(done?fds(date):(ic?"今月":"未投与"))+'</span>'+(dueStr?'<span class="hw-month-due">'+dueStr+"</span>":"")+"</button>"}).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:800">'+gv+"/"+CM+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
+  var gv=Object.values(r.hw).filter(function(v){return v&&v!=="skip"}).length,pct=Math.round(gv/CM*100);
+  var hwHTML='<div class="hw-grid">'+Array.from({length:12},function(_,i){
+    var m=i+1,val=r.hw[m],done=val&&val!=="skip",isSkip=val==="skip",ic=m===CM,ifu=m>CM&&!val;
+    var bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";
+    var cls="hw-month"+(done?" done":"")+(isSkip?" skip":"")+(ifu?" future":"");
+    var dueStr="";
+    if(!val&&m<=CM){var prev=r.hw[m-1];if(prev&&prev!=="skip"){var due=nd(prev,1);var days=du(due);dueStr=days<0?"期限切れ":"期限:"+fds(due.toISOString().split("T")[0])}}
+    var icon=isSkip?"➖":done?"✅":"⭕";
+    var label=isSkip?"不要":done?fds(val):ic?"今月":"未投与";
+    return'<button class="'+cls+'" style="'+bg+'" onclick="thm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+icon+'</span><span class="hw-month-date">'+label+'</span>'+(dueStr?'<span class="hw-month-due">'+dueStr+"</span>":"")+"</button>"
+  }).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:800">'+gv+"/"+CM+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
 
   var weights=(r.weight||[]).slice().sort(function(a,b){return b.date.localeCompare(a.date)});
   var latest=weights[0]?weights[0].kg:null;
@@ -272,10 +296,7 @@ window.delWeight=async function(idx){
 window.thm=function(m){
   var cur=REC[AD].hw[m];
   if(cur){REC[AD].hw[m]="";save();render();return}
-  openModal(MONTHS[m-1]+"の投与日",new Date().toISOString().split("T")[0],async function(){
-    var v=document.getElementById("modal-date").value;if(!v)return;
-    REC[AD].hw[m]=v;await save();closeModal();render();toast("✅ 保存しました");
-  });
+  openHwModal(m);
 };
 </script>
 </body>

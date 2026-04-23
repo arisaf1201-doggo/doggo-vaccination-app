@@ -238,7 +238,10 @@ function render(){
     return'<div class="vaccine-card"><div class="vaccine-header"><div class="vaccine-name">'+v.icon+" "+v.name+'</div><button class="edit-btn" style="background:'+dog.color+'" onclick="te(\''+v.id+'\')">'+( ed?"✕ 閉じる":"＋ 追加")+'</button></div><div class="history-list">'+histHTML+'</div>'+(arr.length?'<div class="status-row"><span>次回予定</span>'+bh(days)+'</div>':"")+(ed?'<div class="add-form"><div class="add-form-row"><input type="date" class="date-input" id="di'+v.id+'" placeholder="接種日"></div>'+(v.hasType?'<div class="add-form-row"><input type="text" class="text-input" id="dt'+v.id+'" placeholder="種類（例：コアワクチン5種）"></div>':"")+'<div class="add-form-btns"><button class="save-btn" style="background:'+dog.color+'" onclick="sv(\''+v.id+'\')">保存</button><button class="cancel-btn" onclick="ce()">✕</button></div></div>':"")+"</div>"
   }).join("");
 
-  var gv=Object.values(r.hw).filter(function(v){return v&&v!=="skip"}).length,pct=Math.round(gv/CM*100);
+var skipCount=Object.entries(r.hw).filter(function(e){return parseInt(e[0])<=CM&&e[1]==="skip"}).length;
+var gv=Object.values(r.hw).filter(function(v){return v&&v!=="skip"}).length;
+var total=CM-skipCount;
+var pct=total>0?Math.round(gv/total*100):100;
   var hwHTML='<div class="hw-grid">'+Array.from({length:12},function(_,i){
     var m=i+1,val=r.hw[m],done=val&&val!=="skip",isSkip=val==="skip",ic=m===CM,ifu=m>CM&&!val;
     var bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";
@@ -248,7 +251,7 @@ function render(){
     var icon=isSkip?"➖":done?"✅":"⭕";
     var label=isSkip?"不要":done?fds(val):ic?"今月":"未投与";
     return'<button class="'+cls+'" style="'+bg+'" onclick="thm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+icon+'</span><span class="hw-month-date">'+label+'</span>'+(dueStr?'<span class="hw-month-due">'+dueStr+"</span>":"")+"</button>"
-  }).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:800">'+gv+"/"+CM+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
+  }).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:800">'+gv+"/"+total+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
 
   var weights=(r.weight||[]).slice().sort(function(a,b){return b.date.localeCompare(a.date)});
   var latest=weights[0]?weights[0].kg:null;

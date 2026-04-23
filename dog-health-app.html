@@ -4,77 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🐾 わんこ健康手帳</title>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#FDF6EE;--card:#fff;--border:#EDE4D8;--text:#3D2C1E;--muted:#9B8272}
-body{background:var(--bg);font-family:'Zen Maru Gothic',sans-serif;color:var(--text)}
+:root{--bg:#F0F4FF;--card:#fff;--border:#E4E8F5;--text:#2D2D3F;--muted:#8B90A8}
+body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);background-image:radial-gradient(ellipse at 20% 0%,#FFE4F0 0%,transparent 50%),radial-gradient(ellipse at 80% 0%,#E0EAFF 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,#E8FFF4 0%,transparent 60%)}
 .app{min-height:100vh;max-width:480px;margin:0 auto;padding:0 0 80px}
-.header{background:var(--card);border-bottom:2px solid var(--border);padding:20px;position:sticky;top:0;z-index:100}
-.header-title{font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
-.sync-status{font-size:11px;color:var(--muted);font-weight:400}
-.dog-tabs{display:flex;gap:8px;margin-top:12px;overflow-x:auto}
-.dog-tab{padding:8px 14px;border-radius:20px;border:2px solid var(--border);background:var(--bg);cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
-.dog-tab.active{color:#fff}
+.header{background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--border);padding:20px;position:sticky;top:0;z-index:100}
+.header-title{font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:space-between;letter-spacing:-0.3px}
+.sync-status{font-size:11px;color:var(--muted);font-weight:600}
+.dog-tabs{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.dog-tabs::-webkit-scrollbar{display:none}
+.dog-tab{padding:8px 16px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-family:'Yomogi',sans-serif}
+.dog-tab.active{color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
 .content{padding:16px}
-.section-tabs{display:flex;background:var(--border);border-radius:12px;padding:4px;margin-bottom:16px}
-.section-tab{flex:1;padding:10px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
-.section-tab.active{background:var(--card);color:var(--text)}
-.vaccine-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
-.vaccine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.vaccine-name{font-size:15px;font-weight:700}
-.edit-btn{color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer}
-.history-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
-.history-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 10px;background:var(--bg);border-radius:8px}
-.history-date{color:var(--text);font-weight:600}
+.section-tabs{display:flex;background:rgba(255,255,255,0.7);border:1.5px solid var(--border);border-radius:14px;padding:4px;margin-bottom:18px;gap:4px}
+.section-tab{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;cursor:pointer;font-family:'Yomogi',sans-serif;font-size:13px;font-weight:800;color:var(--muted);transition:all 0.2s}
+.section-tab.active{background:#fff;color:var(--text);box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+.vaccine-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:0 2px 16px rgba(0,0,0,0.05)}
+.vaccine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.vaccine-name{font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px}
+.edit-btn{color:#fff;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Yomogi',sans-serif}
+.history-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.history-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:10px 12px;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
+.history-date{color:var(--text);font-weight:700}
 .history-next{color:var(--muted);font-size:11px;margin-top:2px}
-.history-type{color:var(--muted);font-size:11px;margin-top:2px}
-.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0}
-.add-form{margin-top:8px;padding-top:10px;border-top:1px solid var(--border)}
+.history-type{color:#7B8ADE;font-size:11px;font-weight:700;margin-top:2px}
+.del-btn{background:none;border:none;color:#CDD0E0;cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0}
+.add-form{margin-top:10px;padding-top:12px;border-top:1.5px dashed var(--border)}
 .add-form-row{display:flex;gap:8px;margin-bottom:8px}
-.date-input{flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px}
-.text-input{flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:14px}
+.date-input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Yomogi',sans-serif;font-weight:600;color:var(--text);background:#fff}
+.text-input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Yomogi',sans-serif;font-weight:600;color:var(--text);background:#fff}
 .add-form-btns{display:flex;gap:8px}
-.save-btn{color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
-.cancel-btn{background:var(--border);color:var(--muted);border:none;border-radius:8px;padding:8px 10px;cursor:pointer}
-.status-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
-.alert-dog-card{background:#FFF5F0;border:1.5px solid #FFD4B8;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:13px}
-.alert-dog-name{font-weight:700;margin-bottom:6px}
-.alert-item{color:var(--text);font-size:12px;display:flex;gap:6px;margin-bottom:3px}
-.alert-label{color:var(--muted);flex-shrink:0}
-.hw-header{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.save-btn{color:#fff;border:none;border-radius:10px;padding:9px 16px;font-weight:800;cursor:pointer;font-family:'Yomogi',sans-serif;font-size:14px}
+.cancel-btn{background:var(--border);color:var(--muted);border:none;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;font-family:'Yomogi',sans-serif;font-size:14px}
+.status-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-weight:600}
+.alert-dog-card{border-radius:16px;padding:12px 16px;margin-bottom:10px;font-size:13px}
+.alert-dog-name{font-weight:900;margin-bottom:8px;font-size:14px;display:flex;align-items:center;gap:6px}
+.alert-item{font-size:12px;display:flex;gap:8px;margin-bottom:4px;align-items:center;font-weight:600}
+.alert-label{color:rgba(0,0,0,0.4);flex-shrink:0;font-weight:700}
+.hw-header{font-size:16px;font-weight:900;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .hw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.hw-month{aspect-ratio:1;border-radius:12px;border:2px solid var(--border);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:1px;padding:4px}
-.hw-month.done{color:#fff}
-.hw-month.future{opacity:0.5}
-.hw-month-name{font-size:11px;font-weight:700}
-.hw-check{font-size:16px}
-.hw-month-date{font-size:9px;color:var(--muted)}
-.hw-month-due{font-size:8px;color:#E65100}
+.hw-month{aspect-ratio:1;border-radius:16px;border:2px solid var(--border);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:2px;padding:4px;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.hw-month.done{border-color:transparent;box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+.hw-month.future{opacity:0.4}
+.hw-month-name{font-size:11px;font-weight:800}
+.hw-check{font-size:16px;line-height:1}
+.hw-month-date{font-size:9px;color:var(--muted);font-weight:700}
+.hw-month-due{font-size:8px;color:#FF6B6B;font-weight:800}
 .hw-month.done .hw-month-date,.hw-month.done .hw-month-name{color:rgba(255,255,255,0.9)}
-.hw-progress{margin-top:14px;background:var(--card);border-radius:12px;border:1.5px solid var(--border);padding:14px}
-.hw-progress-label{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.hw-progress{margin-top:14px;background:#fff;border-radius:16px;border:1.5px solid var(--border);padding:16px;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.hw-progress-label{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;font-weight:700}
 .hw-bar{height:10px;background:var(--border);border-radius:99px;overflow:hidden}
 .hw-fill{height:100%;border-radius:99px}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:flex;align-items:center;justify-content:center}
-.modal{background:var(--card);border-radius:20px;padding:24px;width:88%;max-width:360px}
-.modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
+.modal-bg{position:fixed;inset:0;background:rgba(30,30,60,0.35);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center}
+.modal{background:#fff;border-radius:24px;padding:28px;width:88%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
+.modal-title{font-size:16px;font-weight:900;margin-bottom:16px}
 .modal-btns{display:flex;gap:8px;margin-top:16px}
 .ov-list{display:flex;flex-direction:column;gap:10px}
-.ov-dog{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px}
-.ov-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:700}
-.ov-dot{width:12px;height:12px;border-radius:50%}
-.ov-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:4px}
-.badge{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
-.b-ok{background:#E8F5E9;color:#388E3C}
-.b-soon{background:#FFF3E0;color:#E65100}
-.b-over{background:#FFEBEE;color:#C62828}
+.ov-dog{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.ov-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-weight:900;font-size:15px}
+.ov-dot{width:10px;height:10px;border-radius:50%}
+.ov-item{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.badge{padding:4px 12px;border-radius:99px;font-size:12px;font-weight:800}
+.b-ok{background:#E3FFF0;color:#00B87A}
+.b-soon{background:#FFF4E0;color:#FF9500}
+.b-over{background:#FFE8EC;color:#FF3860}
 .b-none{background:var(--border);color:var(--muted)}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;display:none;z-index:999}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--card);border-top:2px solid var(--border);display:flex;padding:8px 0 16px;z-index:100}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-size:10px;color:var(--muted);font-weight:700}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(30,30,60,0.9);color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:700;display:none;z-index:999}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);border-top:1.5px solid var(--border);display:flex;padding:8px 0 16px;z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-family:'Yomogi',sans-serif;font-size:10px;color:var(--muted);font-weight:800;transition:color 0.2s}
 .nav-icon{font-size:22px}
-.loading{display:flex;align-items:center;justify-content:center;height:200px;font-size:14px;color:var(--muted)}
+.loading{display:flex;align-items:center;justify-content:center;height:200px;font-size:14px;color:var(--muted);font-weight:700}
 </style>
 </head>
 <body>
@@ -108,7 +109,7 @@ body{background:var(--bg);font-family:'Zen Maru Gothic',sans-serif;color:var(--t
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyApjuHagpgMfpDs6QefaVh6UaqNq5zIaiw",
@@ -131,29 +132,21 @@ var REC=null;
 
 function initR(){return Object.fromEntries(DOGS.map(function(d){return[d.id,{vaccines:Object.fromEntries(VACCINES.map(function(v){return[v.id,[]]})),hw:Object.fromEntries(Array.from({length:12},function(_,i){return[i+1,""]}))}]}))}
 
-// Firestore リアルタイム同期
-const docRef = doc(db, "wanko", "records");
-onSnapshot(docRef, function(snap) {
-  if(snap.exists()) {
-    REC = snap.data().data;
-  } else {
-    REC = initR();
-  }
-  document.getElementById("syncStatus").textContent = "✅ 同期済み";
+const docRef = doc(db,"wanko","records");
+onSnapshot(docRef,function(snap){
+  if(snap.exists())REC=snap.data().data;
+  else REC=initR();
+  document.getElementById("syncStatus").textContent="✅ 同期済み";
   render();
-}, function(err) {
-  document.getElementById("syncStatus").textContent = "⚠️ オフライン";
-  if(!REC) REC = initR();
+},function(){
+  document.getElementById("syncStatus").textContent="⚠️ オフライン";
+  if(!REC)REC=initR();
   render();
 });
 
-async function save() {
-  try {
-    await setDoc(docRef, {data: REC});
-    document.getElementById("syncStatus").textContent = "✅ 同期済み";
-  } catch(e) {
-    document.getElementById("syncStatus").textContent = "⚠️ 保存失敗";
-  }
+async function save(){
+  try{await setDoc(docRef,{data:REC});document.getElementById("syncStatus").textContent="✅ 同期済み";}
+  catch(e){document.getElementById("syncStatus").textContent="⚠️ 保存失敗";}
 }
 
 function fd(s){if(!s)return"未記録";var d=new Date(s+"T00:00:00");return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"}
@@ -167,7 +160,7 @@ function openModal(title,cur,onSave){var dog=DOGS.find(function(d){return d.id==
 function closeModal(){document.getElementById("modal").style.display="none"}
 window.closeModal=closeModal;
 
-function renderTabs(){document.getElementById("dogTabs").innerHTML=DOGS.map(function(d){var a=AD===d.id;return'<button class="dog-tab'+(a?" active":"")+'" style="'+(a?"background:"+d.color+";border-color:"+d.color+";":"")+'" onclick="sd(\''+d.id+'\')">'+d.emoji+" "+d.name+"</button>"}).join("")}
+function renderTabs(){document.getElementById("dogTabs").innerHTML=DOGS.map(function(d){var a=AD===d.id;return'<button class="dog-tab'+(a?" active":"")+'" style="'+(a?"background:"+d.color+";":"background:#fff;")+'" onclick="sd(\''+d.id+'\')">'+d.emoji+" "+d.name+"</button>"}).join("")}
 window.sd=function(id){AD=id;EV=null;render()};
 
 function getSortedArr(dogId,vid){var arr=REC[dogId].vaccines[vid]||[];return arr.map(function(x){return typeof x==="object"?x:{date:x,type:""}}).sort(function(a,b){return b.date.localeCompare(a.date)})}
@@ -188,12 +181,12 @@ function renderAlerts(){
     VACCINES.forEach(function(v){
       var ld=latestVax(d.id,v.id),due=nd(ld,v.im),days=du(due);
       if(days===null||days<=60){
-        var val=due?(days<0?'<span style="color:#C62828;font-weight:700">⚠️'+Math.abs(days)+'日過ぎています⚠️</span>':fds(due.toISOString().split("T")[0])+"（あと"+days+"日）"):"未記録";
+        var val=due?(days<0?'<span style="color:#C62828;font-weight:800">⚠️'+Math.abs(days)+'日過ぎています⚠️</span>':fds(due.toISOString().split("T")[0])+"（あと"+days+"日）"):"未記録";
         items.push({label:v.icon+" "+v.name,val:val});
       }
     });
     if(items.length){
-      html+='<div class="alert-dog-card"><div class="alert-dog-name">⚠️ '+d.emoji+" "+d.name+'</div>'+items.map(function(it){return'<div class="alert-item"><span class="alert-label">'+it.label+'</span><span>'+it.val+"</span></div>"}).join("")+"</div>";
+      html+='<div class="alert-dog-card" style="background:'+d.color+'18;border:1.5px solid '+d.color+'44"><div class="alert-dog-name" style="color:'+d.color+'">⚠️ '+d.emoji+" "+d.name+'</div>'+items.map(function(it){return'<div class="alert-item"><span class="alert-label">'+it.label+'</span><span>'+it.val+"</span></div>"}).join("")+"</div>";
     }
   });
   document.getElementById("alerts").innerHTML=html;
@@ -223,21 +216,19 @@ function render(){
       }).join(""):'<div style="font-size:13px;color:var(--muted);padding:4px 0">記録なし</div>';
       return'<div class="vaccine-card"><div class="vaccine-header"><div class="vaccine-name">'+v.icon+" "+v.name+'</div><button class="edit-btn" style="background:'+dog.color+'" onclick="te(\''+v.id+'\')">'+( ed?"✕ 閉じる":"＋ 追加")+'</button></div><div class="history-list">'+histHTML+'</div>'+(arr.length?'<div class="status-row"><span>次回予定</span>'+bh(days)+'</div>':"")+(ed?'<div class="add-form"><div class="add-form-row"><input type="date" class="date-input" id="di'+v.id+'" placeholder="接種日"></div>'+(v.hasType?'<div class="add-form-row"><input type="text" class="text-input" id="dt'+v.id+'" placeholder="種類（例：コアワクチン5種）"></div>':"")+'<div class="add-form-btns"><button class="save-btn" style="background:'+dog.color+'" onclick="sv(\''+v.id+'\')">保存</button><button class="cancel-btn" onclick="ce()">✕</button></div></div>':"")+"</div>"
     }).join("");
-  } else if(AT==="heartworm"){
+  }else if(AT==="heartworm"){
     var r=REC[AD];var gv=Object.values(r.hw).filter(Boolean).length,pct=Math.round(gv/CM*100);
-    c.innerHTML=st+'<div class="hw-header">'+dog.emoji+" "+dog.name+'のフィラリア予防 <span style="font-size:13px;color:var(--muted)">'+CY+'年</span></div><div class="hw-grid">'+Array.from({length:12},function(_,i){var m=i+1,date=r.hw[m],done=!!date,ic=m===CM,ifu=m>CM&&!done,bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";var dueStr="";if(!done&&m<=CM){var prev=r.hw[m-1];if(prev){var due=nd(prev,1);var days=du(due);dueStr=days<0?"期限切れ":"期限:"+fds(due.toISOString().split("T")[0])}}return'<button class="hw-month'+(done?" done":"")+(ifu?" future":"")+'" style="'+bg+'" onclick="thm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+(done?"✅":"⭕")+'</span><span class="hw-month-date">'+(done?fds(date):(ic?"今月":"未投与"))+'</span>'+(dueStr?'<span class="hw-month-due">'+dueStr+"</span>":"")+"</button>"}).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:700">'+gv+"/"+CM+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
-  } else {
-    c.innerHTML='<div style="font-size:18px;font-weight:700;margin-bottom:14px">📋 全犬の状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM];return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span><span class="badge '+(hw?"b-ok":"b-soon")+'">'+(hw?"投与済":"未投与")+"</span></div></div>"}).join("")+"</div>";
+    c.innerHTML=st+'<div class="hw-header">'+dog.emoji+" "+dog.name+'のフィラリア予防 <span style="font-size:13px;color:var(--muted);font-weight:600">'+CY+'年</span></div><div class="hw-grid">'+Array.from({length:12},function(_,i){var m=i+1,date=r.hw[m],done=!!date,ic=m===CM,ifu=m>CM&&!done,bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";var dueStr="";if(!done&&m<=CM){var prev=r.hw[m-1];if(prev){var due=nd(prev,1);var days=du(due);dueStr=days<0?"期限切れ":"期限:"+fds(due.toISOString().split("T")[0])}}return'<button class="hw-month'+(done?" done":"")+(ifu?" future":"")+'" style="'+bg+'" onclick="thm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+(done?"✅":"⭕")+'</span><span class="hw-month-date">'+(done?fds(date):(ic?"今月":"未投与"))+'</span>'+(dueStr?'<span class="hw-month-due">'+dueStr+"</span>":"")+"</button>"}).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:800">'+gv+"/"+CM+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
+  }else{
+    c.innerHTML='<div style="font-size:18px;font-weight:900;margin-bottom:14px">📋 全犬の状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM];return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span><span class="badge '+(hw?"b-ok":"b-soon")+'">'+(hw?"投与済":"未投与")+"</span></div></div>"}).join("")+"</div>";
   }
 }
 
 window.te=function(id){EV=EV===id?null:id;render()};
 window.ce=function(){EV=null;render()};
 window.sv=async function(id){
-  var inp=document.getElementById("di"+id);
-  if(!inp||!inp.value)return;
-  var typeInp=document.getElementById("dt"+id);
-  var type=typeInp?typeInp.value:"";
+  var inp=document.getElementById("di"+id);if(!inp||!inp.value)return;
+  var typeInp=document.getElementById("dt"+id);var type=typeInp?typeInp.value:"";
   if(!REC[AD].vaccines[id])REC[AD].vaccines[id]=[];
   REC[AD].vaccines[id].push({date:inp.value,type:type});
   await save();EV=null;render();toast("✅ 保存しました");
@@ -251,10 +242,8 @@ window.thm=function(m){
   var cur=REC[AD].hw[m];
   if(cur){REC[AD].hw[m]="";save();render();return}
   openModal(MONTHS[m-1]+"の投与日",new Date().toISOString().split("T")[0],async function(){
-    var v=document.getElementById("modal-date").value;
-    if(!v)return;
-    REC[AD].hw[m]=v;
-    await save();closeModal();render();toast("✅ 保存しました");
+    var v=document.getElementById("modal-date").value;if(!v)return;
+    REC[AD].hw[m]=v;await save();closeModal();render();toast("✅ 保存しました");
   });
 };
 </script>

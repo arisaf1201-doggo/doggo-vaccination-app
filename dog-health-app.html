@@ -151,8 +151,8 @@ onSnapshot(docRef,function(snap){
   else REC=initR();
   DOGS.forEach(function(d){
     if(!REC[d.id].weight)REC[d.id].weight=[];
-    if(!REC[d.id].birthday)REC[d.id].birthday="";
-    if(!REC[d.id].anniversary)REC[d.id].anniversary="";
+    if(REC[d.id].birthday===undefined)REC[d.id].birthday="";
+    if(REC[d.id].anniversary===undefined)REC[d.id].anniversary="";
   });
   document.getElementById("syncStatus").textContent="✅ 同期済み";
   render();
@@ -180,8 +180,11 @@ function calcAge(birthday){
   var today=new Date();
   var years=today.getFullYear()-b.getFullYear();
   var months=today.getMonth()-b.getMonth();
-  if(months<0||(months===0&&today.getDate()<b.getDate())){years--;}
-  return years+"歳";
+  if(today.getDate()<b.getDate())months--;
+  if(months<0){years--;months+=12;}
+  if(years===0)return months+"ヶ月";
+  if(months===0)return years+"歳";
+  return years+"歳"+months+"ヶ月";
 }
 
 function calcYears(date){
@@ -189,8 +192,12 @@ function calcYears(date){
   var b=new Date(date+"T00:00:00");
   var today=new Date();
   var years=today.getFullYear()-b.getFullYear();
-  if(today.getMonth()<b.getMonth()||(today.getMonth()===b.getMonth()&&today.getDate()<b.getDate())){years--;}
-  return years+"年";
+  var months=today.getMonth()-b.getMonth();
+  if(today.getDate()<b.getDate())months--;
+  if(months<0){years--;months+=12;}
+  if(years===0)return months+"ヶ月";
+  if(months===0)return years+"年";
+  return years+"年"+months+"ヶ月";
 }
 
 function openHwModal(m){
@@ -263,7 +270,7 @@ function render(){
       var hwBadge=hw==="skip"?'<span class="badge b-skip">不要</span>':hw?'<span class="badge b-ok">投与済</span>':'<span class="badge b-soon">未投与</span>';
       var age=calcAge(r.birthday);
       var anni=calcYears(r.anniversary);
-      return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+(age?' <span style="font-size:12px;color:var(--muted);font-weight:600">'+age+'</span>':'')+'</div>'+
+      return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+(age?' <span style="font-size:12px;color:var(--muted);font-weight:600">('+age+')</span>':'')+'</div>'+
       (r.birthday?'<div class="ov-item"><span>🎂 誕生日</span><span style="font-weight:700;color:var(--text)">'+fd(r.birthday)+'</span></div>':'')+
       (r.anniversary?'<div class="ov-item"><span>🏠 家族になった日</span><span style="font-weight:700;color:var(--text)">'+fd(r.anniversary)+(anni?' ('+anni+')':'')+'</span></div>':'')+
       VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+
@@ -278,13 +285,12 @@ function render(){
   var age=calcAge(r.birthday);
   var anni=calcYears(r.anniversary);
 
-  // Profile card
-  var profileHTML='<div class="profile-card" style="background:'+dog.color+'18;border:1.5px solid '+dog.color+'33;border-radius:20px;margin-bottom:4px">'+
-    '<div class="profile-emoji">'+dog.emoji+'</div>'+
-    '<div class="profile-info">'+
-      '<div class="profile-name" style="color:'+dog.color+'">'+dog.name+'</div>'+
-      '<div class="profile-row">🎂 <span class="profile-val">'+(r.birthday?fd(r.birthday):"未設定")+'</span>'+(age?'<span class="profile-age">('+age+')</span>':'')+'</div>'+
-      '<div class="profile-row">🏠 <span class="profile-val">'+(r.anniversary?fd(r.anniversary):"未設定")+'</span>'+(anni?'<span class="profile-age">('+anni+')</span>':'')+'</div>'+
+  var profileHTML='<div style="background:'+dog.color+'18;border:1.5px solid '+dog.color+'33;border-radius:20px;padding:18px;margin-bottom:4px;display:flex;align-items:center;gap:16px">'+
+    '<div style="font-size:48px;line-height:1">'+dog.emoji+'</div>'+
+    '<div style="flex:1">'+
+      '<div style="font-size:20px;font-weight:900;color:'+dog.color+';margin-bottom:6px">'+dog.name+'</div>'+
+      '<div style="font-size:13px;color:var(--muted);margin-bottom:3px">🎂 <span style="color:var(--text);font-weight:700">'+(r.birthday?fd(r.birthday):"未設定")+'</span>'+(age?' <span style="font-size:11px;color:var(--muted)">('+age+')</span>':'')+'</div>'+
+      '<div style="font-size:13px;color:var(--muted)">🏠 <span style="color:var(--text);font-weight:700">'+(r.anniversary?fd(r.anniversary):"未設定")+'</span>'+(anni?' <span style="font-size:11px;color:var(--muted)">('+anni+')</span>':'')+'</div>'+
     '</div>'+
     '<button class="edit-btn" style="background:'+dog.color+';align-self:flex-start" onclick="togglePE()">✏️</button>'+
   '</div>'+

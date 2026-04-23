@@ -4,7 +4,7 @@
 
 ## URL
 
-https://arisaf1201-doggo.github.io/doggo-vactination-app/dog-health-app.html
+https://arisaf1201-doggo.github.io/doggo-vaccination-app/dog-health-app.html
 
 ## 機能
 

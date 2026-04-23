@@ -258,7 +258,7 @@ function render(){
     }
 
   }else{
-    c.innerHTML='<div style="font-size:18px;font-weight:900;margin-bottom:14px">📋 全犬の状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM],ws=(r.weight||[]);var lw=ws.length?ws.slice().sort(function(a,b){return b.date.localeCompare(a.date)})[0]:null;return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span><span class="badge '+(hw?"b-ok":"b-soon")+'">'+(hw?"投与済":"未投与")+'</span></div><div class="ov-item"><span>⚖️ 体重</span><span style="font-weight:800;color:'+d.color+'">'+(lw?lw.kg+"kg":"未記録")+"</span></div></div>"}).join("")+"</div>";
+    c.innerHTML='<div style="font-size:18px;font-weight:900;margin-bottom:14px">📋 みんなの状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM],ws=(r.weight||[]);var lw=ws.length?ws.slice().sort(function(a,b){return b.date.localeCompare(a.date)})[0]:null;return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span><span class="badge '+(hw?"b-ok":"b-soon")+'">'+(hw?"投与済":"未投与")+'</span></div><div class="ov-item"><span>⚖️ 体重</span><span style="font-weight:800;color:'+d.color+'">'+(lw?lw.kg+"kg":"未記録")+"</span></div></div>"}).join("")+"</div>";
   }
 }
 

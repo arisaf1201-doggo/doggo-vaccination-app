@@ -21,6 +21,13 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
 .overview-tab{padding:8px 16px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-family:'Yomogi',sans-serif}
 .overview-tab.active{background:#5B6AF0;border-color:#5B6AF0;color:#fff;box-shadow:0 4px 16px #5B6AF055}
 .content{padding:16px}
+.profile-card{border-radius:20px;padding:18px;margin-bottom:4px;display:flex;align-items:center;gap:16px}
+.profile-emoji{font-size:48px;line-height:1}
+.profile-info{flex:1}
+.profile-name{font-size:20px;font-weight:900;margin-bottom:6px}
+.profile-row{font-size:13px;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.profile-val{color:var(--text);font-weight:700}
+.profile-age{font-size:11px;color:var(--muted);margin-left:4px}
 .section-title{font-size:16px;font-weight:900;margin:20px 0 12px;display:flex;align-items:center;justify-content:space-between}
 .section-title-left{display:flex;align-items:center;gap:8px}
 .vaccine-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:0 2px 16px rgba(0,0,0,0.05)}
@@ -84,6 +91,8 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
 .b-skip{background:#F0F0F0;color:#999}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(30,30,60,0.9);color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:700;display:none;z-index:999}
 .loading{display:flex;align-items:center;justify-content:center;height:200px;font-size:14px;color:var(--muted);font-weight:700}
+.profile-edit-form{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
+.profile-edit-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -131,16 +140,20 @@ var DOGS=[{id:"koharu",name:"こはる",emoji:"🐕",color:"#E8956D"},{id:"noel"
 var VACCINES=[{id:"rabies",name:"狂犬病",icon:"🔴",im:12,hasType:false},{id:"mixed",name:"混合ワクチン",icon:"💉",im:12,hasType:true}];
 var MONTHS=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
 var now=new Date(),CY=now.getFullYear(),CM=now.getMonth()+1;
-var AD="overview",EV=null,WE=false;
+var AD="overview",EV=null,WE=false,PE=false;
 var REC=null,weightChart=null;
 
-function initR(){return Object.fromEntries(DOGS.map(function(d){return[d.id,{vaccines:Object.fromEntries(VACCINES.map(function(v){return[v.id,[]]})),hw:Object.fromEntries(Array.from({length:12},function(_,i){return[i+1,""]})),weight:[]}]}))}
+function initR(){return Object.fromEntries(DOGS.map(function(d){return[d.id,{vaccines:Object.fromEntries(VACCINES.map(function(v){return[v.id,[]]})),hw:Object.fromEntries(Array.from({length:12},function(_,i){return[i+1,""]})),weight:[],birthday:"",anniversary:""}]}))}
 
 const docRef=doc(db,"wanko","records");
 onSnapshot(docRef,function(snap){
   if(snap.exists())REC=snap.data().data;
   else REC=initR();
-  DOGS.forEach(function(d){if(!REC[d.id].weight)REC[d.id].weight=[]});
+  DOGS.forEach(function(d){
+    if(!REC[d.id].weight)REC[d.id].weight=[];
+    if(!REC[d.id].birthday)REC[d.id].birthday="";
+    if(!REC[d.id].anniversary)REC[d.id].anniversary="";
+  });
   document.getElementById("syncStatus").textContent="✅ 同期済み";
   render();
 },function(){
@@ -160,6 +173,25 @@ function nd(s,m){if(!s)return null;var d=new Date(s+"T00:00:00");d.setMonth(d.ge
 function du(d){if(!d)return null;var t=new Date();t.setHours(0,0,0,0);return Math.round((d-t)/86400000)}
 function bh(days){if(days===null)return'<span class="badge b-none">未記録</span>';if(days<0)return'<span class="badge b-over">期限切れ</span>';if(days<=30)return'<span class="badge b-soon">あと'+days+'日</span>';return'<span class="badge b-ok">あと'+days+'日</span>'}
 function toast(m){var t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},2000)}
+
+function calcAge(birthday){
+  if(!birthday)return null;
+  var b=new Date(birthday+"T00:00:00");
+  var today=new Date();
+  var years=today.getFullYear()-b.getFullYear();
+  var months=today.getMonth()-b.getMonth();
+  if(months<0||(months===0&&today.getDate()<b.getDate())){years--;}
+  return years+"歳";
+}
+
+function calcYears(date){
+  if(!date)return null;
+  var b=new Date(date+"T00:00:00");
+  var today=new Date();
+  var years=today.getFullYear()-b.getFullYear();
+  if(today.getMonth()<b.getMonth()||(today.getMonth()===b.getMonth()&&today.getDate()<b.getDate())){years--;}
+  return years+"年";
+}
 
 function openHwModal(m){
   var dog=DOGS.find(function(d){return d.id===AD});
@@ -183,7 +215,7 @@ function renderTabs(){
 }
 
 window.sd=function(id){
-  AD=id;EV=null;WE=false;
+  AD=id;EV=null;WE=false;PE=false;
   if(weightChart){weightChart.destroy();weightChart=null;}
   render();
 };
@@ -225,12 +257,42 @@ function render(){
   var c=document.getElementById("content");
 
   if(AD==="overview"){
-    c.innerHTML='<div style="font-size:18px;font-weight:900;margin-bottom:14px">📋 みんなの状況</div><div class="ov-list">'+DOGS.map(function(d){var r=REC[d.id],hw=r.hw[CM],ws=(r.weight||[]);var lw=ws.length?ws.slice().sort(function(a,b){return b.date.localeCompare(a.date)})[0]:null;var hwBadge=hw==="skip"?'<span class="badge b-skip">不要</span>':hw?'<span class="badge b-ok">投与済</span>':'<span class="badge b-soon">未投与</span>';return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+'</div>'+VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+'<div class="ov-item"><span>💊 フィラリア（今月）</span>'+hwBadge+'</div><div class="ov-item"><span>⚖️ 体重</span><span style="font-weight:800;color:'+d.color+'">'+(lw?lw.kg+"kg":"未記録")+"</span></div></div>"}).join("")+"</div>";
+    c.innerHTML='<div style="font-size:18px;font-weight:900;margin-bottom:14px">📋 みんなの状況</div><div class="ov-list">'+DOGS.map(function(d){
+      var r=REC[d.id],hw=r.hw[CM],ws=(r.weight||[]);
+      var lw=ws.length?ws.slice().sort(function(a,b){return b.date.localeCompare(a.date)})[0]:null;
+      var hwBadge=hw==="skip"?'<span class="badge b-skip">不要</span>':hw?'<span class="badge b-ok">投与済</span>':'<span class="badge b-soon">未投与</span>';
+      var age=calcAge(r.birthday);
+      var anni=calcYears(r.anniversary);
+      return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+(age?' <span style="font-size:12px;color:var(--muted);font-weight:600">'+age+'</span>':'')+'</div>'+
+      (r.birthday?'<div class="ov-item"><span>🎂 誕生日</span><span style="font-weight:700;color:var(--text)">'+fd(r.birthday)+'</span></div>':'')+
+      (r.anniversary?'<div class="ov-item"><span>🏠 家族になった日</span><span style="font-weight:700;color:var(--text)">'+fd(r.anniversary)+(anni?' ('+anni+')':'')+'</span></div>':'')+
+      VACCINES.map(function(v){var ld=latestVax(d.id,v.id),due=nd(ld,v.im);return'<div class="ov-item"><span>'+v.icon+" "+v.name+"</span>"+bh(du(due))+"</div>"}).join("")+
+      '<div class="ov-item"><span>💊 フィラリア（今月）</span>'+hwBadge+'</div>'+
+      '<div class="ov-item"><span>⚖️ 体重</span><span style="font-weight:800;color:'+d.color+'">'+(lw?lw.kg+"kg":"未記録")+"</span></div></div>"
+    }).join("")+"</div>";
     return;
   }
 
   var dog=DOGS.find(function(d){return d.id===AD});
   var r=REC[AD];
+  var age=calcAge(r.birthday);
+  var anni=calcYears(r.anniversary);
+
+  // Profile card
+  var profileHTML='<div class="profile-card" style="background:'+dog.color+'18;border:1.5px solid '+dog.color+'33;border-radius:20px;margin-bottom:4px">'+
+    '<div class="profile-emoji">'+dog.emoji+'</div>'+
+    '<div class="profile-info">'+
+      '<div class="profile-name" style="color:'+dog.color+'">'+dog.name+'</div>'+
+      '<div class="profile-row">🎂 <span class="profile-val">'+(r.birthday?fd(r.birthday):"未設定")+'</span>'+(age?'<span class="profile-age">('+age+')</span>':'')+'</div>'+
+      '<div class="profile-row">🏠 <span class="profile-val">'+(r.anniversary?fd(r.anniversary):"未設定")+'</span>'+(anni?'<span class="profile-age">('+anni+')</span>':'')+'</div>'+
+    '</div>'+
+    '<button class="edit-btn" style="background:'+dog.color+';align-self:flex-start" onclick="togglePE()">✏️</button>'+
+  '</div>'+
+  (PE?'<div class="profile-edit-form">'+
+    '<div class="profile-edit-row">🎂 誕生日<input type="date" class="date-input" id="p-birthday" value="'+(r.birthday||"")+'"></div>'+
+    '<div class="profile-edit-row">🏠 家族になった日<input type="date" class="date-input" id="p-anniversary" value="'+(r.anniversary||"")+'"></div>'+
+    '<div class="add-form-btns"><button class="save-btn" style="background:'+dog.color+'" onclick="saveProfile()">保存</button><button class="cancel-btn" onclick="togglePE()">✕</button></div>'+
+  '</div>':"");
 
   var vaccineHTML=VACCINES.map(function(v){
     var arr=getSortedArr(AD,v.id);var ld=arr.length?arr[0].date:null;var due=nd(ld,v.im),days=du(due);var ed=EV===v.id;
@@ -238,10 +300,11 @@ function render(){
     return'<div class="vaccine-card"><div class="vaccine-header"><div class="vaccine-name">'+v.icon+" "+v.name+'</div><button class="edit-btn" style="background:'+dog.color+'" onclick="te(\''+v.id+'\')">'+( ed?"✕ 閉じる":"＋ 追加")+'</button></div><div class="history-list">'+histHTML+'</div>'+(arr.length?'<div class="status-row"><span>次回予定</span>'+bh(days)+'</div>':"")+(ed?'<div class="add-form"><div class="add-form-row"><input type="date" class="date-input" id="di'+v.id+'" placeholder="接種日"></div>'+(v.hasType?'<div class="add-form-row"><input type="text" class="text-input" id="dt'+v.id+'" placeholder="種類（例：コアワクチン5種）"></div>':"")+'<div class="add-form-btns"><button class="save-btn" style="background:'+dog.color+'" onclick="sv(\''+v.id+'\')">保存</button><button class="cancel-btn" onclick="ce()">✕</button></div></div>':"")+"</div>"
   }).join("");
 
-var skipCount=Object.entries(r.hw).filter(function(e){return parseInt(e[0])<=CM&&e[1]==="skip"}).length;
-var gv=Object.values(r.hw).filter(function(v){return v&&v!=="skip"}).length;
-var total=CM-skipCount;
-var pct=total>0?Math.round(gv/total*100):100;
+  var skipCount=Object.entries(r.hw).filter(function(e){return parseInt(e[0])<=CM&&e[1]==="skip"}).length;
+  var gv=Object.values(r.hw).filter(function(v){return v&&v!=="skip"}).length;
+  var total=CM-skipCount;
+  var pct=total>0?Math.round(gv/total*100):100;
+
   var hwHTML='<div class="hw-grid">'+Array.from({length:12},function(_,i){
     var m=i+1,val=r.hw[m],done=val&&val!=="skip",isSkip=val==="skip",ic=m===CM,ifu=m>CM&&!val;
     var bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";
@@ -262,7 +325,8 @@ var pct=total>0?Math.round(gv/total*100):100;
   var weightHTML=(WE?'<div class="weight-card"><div class="add-form-row"><input type="date" class="date-input" id="wdate" value="'+new Date().toISOString().split("T")[0]+'"></div><div class="add-form-row"><input type="number" class="num-input" id="wkg" placeholder="体重" step="0.1" min="0" max="100"><span style="padding:9px 4px;font-size:14px">kg</span></div><div class="add-form-btns"><button class="save-btn" style="background:'+dog.color+'" onclick="saveWeight()">保存</button><button class="cancel-btn" onclick="toggleWE()">✕</button></div></div>':"")+(latest?'<div class="weight-card"><div class="weight-summary"><div class="weight-stat"><div class="weight-stat-val" style="color:'+dog.color+'">'+latest+'kg</div><div class="weight-stat-label">最新体重</div></div><div class="weight-stat"><div class="weight-stat-val" style="color:'+diffColor+'">'+diffStr+'</div><div class="weight-stat-label">前回比</div></div><div class="weight-stat"><div class="weight-stat-val" style="color:var(--muted)">'+weights.length+'</div><div class="weight-stat-label">記録数</div></div></div></div>':"")+(weights.length>=2?'<div class="chart-wrap"><canvas id="weightChart" height="180"></canvas></div>':"")+'<div class="weight-card"><div style="font-size:14px;font-weight:800;margin-bottom:10px">記録履歴</div>'+(weights.length?weights.map(function(w,i){return'<div class="weight-history-item"><span style="font-weight:700">'+fd(w.date)+'</span><div style="display:flex;align-items:center;gap:10px"><span style="font-weight:800;color:'+dog.color+'">'+w.kg+'kg</span><button class="del-btn" onclick="delWeight('+i+')">🗑</button></div></div>'}).join(""):'<div style="font-size:13px;color:var(--muted);padding:4px 0">記録なし</div>')+'</div>';
 
   c.innerHTML=
-    '<div class="section-title" style="margin-top:4px"><div class="section-title-left">💉 ワクチン</div></div>'+vaccineHTML+
+    profileHTML+
+    '<div class="section-title" style="margin-top:16px"><div class="section-title-left">💉 ワクチン</div></div>'+vaccineHTML+
     '<div class="section-title"><div class="section-title-left">💊 フィラリア予防 <span style="font-size:13px;color:var(--muted);font-weight:400">'+CY+'年</span></div></div>'+hwHTML+
     '<div class="section-title"><div class="section-title-left">⚖️ 体重</div><button class="edit-btn" style="background:'+dog.color+'" onclick="toggleWE()">'+( WE?"✕ 閉じる":"＋ 追加")+'</button></div>'+weightHTML;
 
@@ -272,6 +336,13 @@ var pct=total>0?Math.round(gv/total*100):100;
 window.te=function(id){EV=EV===id?null:id;render()};
 window.ce=function(){EV=null;render()};
 window.toggleWE=function(){WE=!WE;render()};
+window.togglePE=function(){PE=!PE;render()};
+window.saveProfile=async function(){
+  var b=document.getElementById("p-birthday"),a=document.getElementById("p-anniversary");
+  REC[AD].birthday=b?b.value:"";
+  REC[AD].anniversary=a?a.value:"";
+  await save();PE=false;render();toast("✅ 保存しました");
+};
 window.sv=async function(id){
   var inp=document.getElementById("di"+id);if(!inp||!inp.value)return;
   var typeInp=document.getElementById("dt"+id);var type=typeInp?typeInp.value:"";

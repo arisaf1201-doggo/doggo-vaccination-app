@@ -1,10 +1,10 @@
-# 🐾 わんこ健康手帳
+# 🐾 福間家イヌズ健康手帳
 
-こはる・Noël・エルモ・ラルフのワクチンとフィラリア予防を管理するWebアプリです。
+こはる・Noël・エルモ・ラルフの健康を管理するWebアプリです。
 
 ## URL
 
-https://arisaf1201-doggo.github.io/doggo-vactination-app/dog-health-app.html
+https://arisaf1201-doggo.github.io/doggo-vaccination-app/dog-health-app.html
 
 ## 機能
 
@@ -22,24 +22,33 @@ https://arisaf1201-doggo.github.io/doggo-vactination-app/dog-health-app.html
 
 ### 💊 フィラリア予防管理
 - 月ごとに投与日を記録（タップでモーダル入力）
+- **「不要」選択肢あり**（投薬不要の月は算定対象外）
 - 前回投与から1ヶ月後の期限を表示
-- 今年の投与率をプログレスバーで表示
+- 今年の投与率をプログレスバーで表示（不要月は除外）
 
-### 📋 全犬の状況一覧
-- 4匹まとめてワクチン・フィラリアの状況を確認
+### ⚖️ 体重管理
+- 日付と体重を記録
+- 折れ線グラフで推移を表示（2件以上から）
+- 最新体重・前回比・記録数を表示
+- 記録履歴の削除も可能
 
-## データについて
+### 📋 みんなの状況（一覧）
+- 4匹まとめてワクチン・フィラリア・体重の状況を確認
 
-- データはブラウザのlocalStorageに保存されます
-- **シークレットブラウザでは保存されません**
-- 他の端末とはデータ共有されません
+## データ
+- **Firebase Firestore**に保存（リアルタイム同期）
+- PC・スマホどちらから入力しても即時反映
+- URLを共有すれば家族も閲覧・編集可能
+
+## ブランチ
+- `main` : 本番
+- `develop` : 開発用
 
 ## スマホでの使い方
-
 Safariで開いて「ホーム画面に追加」するとアプリのように使えます。
 
 ## 開発メモ
-
-- localStorage key: `wanko4`
+- Firebase project: `doggo-health`
+- Firestore key: `wanko/records`
+- フィラリア「不要」は `"skip"` で保存
 - ワクチンデータ形式: `{date: "YYYY-MM-DD", type: "種類"}`
-- フィラリアデータ形式: 月番号をkeyにした `"YYYY-MM-DD"` の文字列

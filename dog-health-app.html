@@ -21,13 +21,6 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
 .overview-tab{padding:8px 16px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-family:'Yomogi',sans-serif}
 .overview-tab.active{background:#5B6AF0;border-color:#5B6AF0;color:#fff;box-shadow:0 4px 16px #5B6AF055}
 .content{padding:16px}
-.profile-card{border-radius:20px;padding:18px;margin-bottom:4px;display:flex;align-items:center;gap:16px}
-.profile-emoji{font-size:48px;line-height:1}
-.profile-info{flex:1}
-.profile-name{font-size:20px;font-weight:900;margin-bottom:6px}
-.profile-row{font-size:13px;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:6px}
-.profile-val{color:var(--text);font-weight:700}
-.profile-age{font-size:11px;color:var(--muted);margin-left:4px}
 .section-title{font-size:16px;font-weight:900;margin:20px 0 12px;display:flex;align-items:center;justify-content:space-between}
 .section-title-left{display:flex;align-items:center;gap:8px}
 .vaccine-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:0 2px 16px rgba(0,0,0,0.05)}
@@ -248,13 +241,26 @@ function renderWeightChart(dog,weights){
   if(sorted.length<2)return;
   var ctx=document.getElementById("weightChart");
   if(!ctx)return;
+  var vals=sorted.map(function(w){return w.kg});
+  var minVal=Math.floor((Math.min.apply(null,vals)-0.1)*10)/10;
+  var maxVal=Math.ceil((Math.max.apply(null,vals)+0.1)*10)/10;
   weightChart=new Chart(ctx,{
     type:"line",
     data:{
       labels:sorted.map(function(w){var d=new Date(w.date+"T00:00:00");return(d.getMonth()+1)+"/"+d.getDate()}),
-      datasets:[{data:sorted.map(function(w){return w.kg}),borderColor:dog.color,backgroundColor:dog.color+"22",borderWidth:2.5,pointBackgroundColor:dog.color,pointRadius:5,fill:true,tension:0.4}]
+      datasets:[{data:vals,borderColor:dog.color,backgroundColor:dog.color+"22",borderWidth:2.5,pointBackgroundColor:dog.color,pointRadius:5,fill:true,tension:0.4}]
     },
-    options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:11},color:"#8B90A8"}},y:{grid:{color:"#E4E8F5"},ticks:{font:{size:11},color:"#8B90A8",callback:function(v){return v+"kg"}}}}}
+    options:{
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:11},color:"#8B90A8"}},
+        y:{
+          min:minVal,max:maxVal,
+          grid:{color:"#E4E8F5"},
+          ticks:{font:{size:11},color:"#8B90A8",stepSize:0.1,callback:function(v){return parseFloat(v.toFixed(1))+"kg"}}
+        }
+      }
+    }
   });
 }
 
@@ -307,77 +313,4 @@ function render(){
   }).join("");
 
   var skipCount=Object.entries(r.hw).filter(function(e){return parseInt(e[0])<=CM&&e[1]==="skip"}).length;
-  var gv=Object.values(r.hw).filter(function(v){return v&&v!=="skip"}).length;
-  var total=CM-skipCount;
-  var pct=total>0?Math.round(gv/total*100):100;
-
-  var hwHTML='<div class="hw-grid">'+Array.from({length:12},function(_,i){
-    var m=i+1,val=r.hw[m],done=val&&val!=="skip",isSkip=val==="skip",ic=m===CM,ifu=m>CM&&!val;
-    var bg=done?"background:"+dog.color+";border-color:"+dog.color+";":ic?"border-color:"+dog.color+";":"";
-    var cls="hw-month"+(done?" done":"")+(isSkip?" skip":"")+(ifu?" future":"");
-    var dueStr="";
-    if(!val&&m<=CM){var prev=r.hw[m-1];if(prev&&prev!=="skip"){var due=nd(prev,1);var days=du(due);dueStr=days<0?"期限切れ":"期限:"+fds(due.toISOString().split("T")[0])}}
-    var icon=isSkip?"➖":done?"✅":"⭕";
-    var label=isSkip?"不要":done?fds(val):ic?"今月":"未投与";
-    return'<button class="'+cls+'" style="'+bg+'" onclick="thm('+m+')"><span class="hw-month-name">'+MONTHS[m-1]+'</span><span class="hw-check">'+icon+'</span><span class="hw-month-date">'+label+'</span>'+(dueStr?'<span class="hw-month-due">'+dueStr+"</span>":"")+"</button>"
-  }).join("")+'</div><div class="hw-progress"><div class="hw-progress-label"><span>今年の投与率</span><span style="color:'+dog.color+';font-weight:800">'+gv+"/"+total+"ヶ月 ("+pct+'%)</span></div><div class="hw-bar"><div class="hw-fill" style="width:'+pct+"%;background:"+dog.color+'"></div></div></div>';
-
-  var weights=(r.weight||[]).slice().sort(function(a,b){return b.date.localeCompare(a.date)});
-  var latest=weights[0]?weights[0].kg:null;
-  var prev2=weights[1]?weights[1].kg:null;
-var diff=latest&&prev2?Math.round((latest-prev2)*1000):null;
-var diffStr=diff!=null&&diff!==0?(diff>0?"+"+diff:diff)+"g":"±0g";
-  var diffColor=diff?(parseFloat(diff)>0?"#FF6B6B":parseFloat(diff)<0?"#00B87A":"#8B90A8"):"#8B90A8";
-  var weightHTML=(WE?'<div class="weight-card"><div class="add-form-row"><input type="date" class="date-input" id="wdate" value="'+new Date().toISOString().split("T")[0]+'"></div><div class="add-form-row"><input type="number" class="num-input" id="wkg" placeholder="体重" step="0.1" min="0" max="100"><span style="padding:9px 4px;font-size:14px">kg</span></div><div class="add-form-btns"><button class="save-btn" style="background:'+dog.color+'" onclick="saveWeight()">保存</button><button class="cancel-btn" onclick="toggleWE()">✕</button></div></div>':"")+(latest?'<div class="weight-card"><div class="weight-summary"><div class="weight-stat"><div class="weight-stat-val" style="color:'+dog.color+'">'+latest+'kg</div><div class="weight-stat-label">最新体重</div></div><div class="weight-stat"><div class="weight-stat-val" style="color:'+diffColor+'">'+diffStr+'</div><div class="weight-stat-label">前回比</div></div><div class="weight-stat"><div class="weight-stat-val" style="color:var(--muted)">'+weights.length+'</div><div class="weight-stat-label">記録数</div></div></div></div>':"")+(weights.length>=2?'<div class="chart-wrap"><canvas id="weightChart" height="180"></canvas></div>':"")+'<div class="weight-card"><div style="font-size:14px;font-weight:800;margin-bottom:10px">記録履歴</div>'+(weights.length?weights.map(function(w,i){return'<div class="weight-history-item"><span style="font-weight:700">'+fd(w.date)+'</span><div style="display:flex;align-items:center;gap:10px"><span style="font-weight:800;color:'+dog.color+'">'+w.kg+'kg</span><button class="del-btn" onclick="delWeight('+i+')">🗑</button></div></div>'}).join(""):'<div style="font-size:13px;color:var(--muted);padding:4px 0">記録なし</div>')+'</div>';
-
-  c.innerHTML=
-    profileHTML+
-    '<div class="section-title" style="margin-top:16px"><div class="section-title-left">💉 ワクチン</div></div>'+vaccineHTML+
-    '<div class="section-title"><div class="section-title-left">💊 フィラリア予防 <span style="font-size:13px;color:var(--muted);font-weight:400">'+CY+'年</span></div></div>'+hwHTML+
-    '<div class="section-title"><div class="section-title-left">⚖️ 体重</div><button class="edit-btn" style="background:'+dog.color+'" onclick="toggleWE()">'+( WE?"✕ 閉じる":"＋ 追加")+'</button></div>'+weightHTML;
-
-  if(weights.length>=2){setTimeout(function(){renderWeightChart(dog,weights)},50);}
-}
-
-window.te=function(id){EV=EV===id?null:id;render()};
-window.ce=function(){EV=null;render()};
-window.toggleWE=function(){WE=!WE;render()};
-window.togglePE=function(){PE=!PE;render()};
-window.saveProfile=async function(){
-  var b=document.getElementById("p-birthday"),a=document.getElementById("p-anniversary");
-  REC[AD].birthday=b?b.value:"";
-  REC[AD].anniversary=a?a.value:"";
-  await save();PE=false;render();toast("✅ 保存しました");
-};
-window.sv=async function(id){
-  var inp=document.getElementById("di"+id);if(!inp||!inp.value)return;
-  var typeInp=document.getElementById("dt"+id);var type=typeInp?typeInp.value:"";
-  if(!REC[AD].vaccines[id])REC[AD].vaccines[id]=[];
-  REC[AD].vaccines[id].push({date:inp.value,type:type});
-  await save();EV=null;render();toast("✅ 保存しました");
-};
-window.delVax=async function(vid,idx){
-  var arr=getSortedArr(AD,vid);arr.splice(idx,1);
-  REC[AD].vaccines[vid]=arr;await save();render();toast("🗑 削除しました");
-};
-window.saveWeight=async function(){
-  var d=document.getElementById("wdate"),k=document.getElementById("wkg");
-  if(!d.value||!k.value)return;
-  var kg=parseFloat(k.value);if(isNaN(kg))return;
-  if(!REC[AD].weight)REC[AD].weight=[];
-  REC[AD].weight.push({date:d.value,kg:kg});
-  await save();WE=false;render();toast("✅ 保存しました");
-};
-window.delWeight=async function(idx){
-  var ws=(REC[AD].weight||[]).slice().sort(function(a,b){return b.date.localeCompare(a.date)});
-  ws.splice(idx,1);REC[AD].weight=ws;
-  await save();render();toast("🗑 削除しました");
-};
-window.thm=function(m){
-  var cur=REC[AD].hw[m];
-  if(cur){REC[AD].hw[m]="";save();render();return}
-  openHwModal(m);
-};
-</script>
-</body>
-</html>
+  var gv=Object.values(r.hw).filter(function(v)

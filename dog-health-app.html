@@ -95,10 +95,7 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
   <div class="header">
     <div class="header-title">
       🐾 福間家イヌズ健康手帳
-      <div class="header-right">
-        <button class="backup-btn" onclick="downloadCSV()">💾 CSV</button>
-        <span class="sync-status" id="syncStatus">接続中...</span>
-      </div>
+      <span class="sync-status" id="syncStatus">接続中...</span>
     </div>
     <div class="dog-tabs" id="dogTabs"></div>
   </div>
@@ -294,7 +291,11 @@ function renderWeightChart(dog,weights){
       plugins:{legend:{display:false}},
       scales:{
         x:{grid:{display:false},ticks:{font:{size:11},color:"#8B90A8"}},
-        y:{min:minVal,max:maxVal,grid:{color:"#E4E8F5"},ticks:{font:{size:11},color:"#8B90A8",stepSize:0.1,callback:function(v){return parseFloat(v.toFixed(1))+"kg"}}}
+        y:{
+          min:minVal,max:maxVal,
+          grid:{color:"#E4E8F5"},
+          ticks:{font:{size:11},color:"#8B90A8",stepSize:0.1,callback:function(v){return parseFloat(v.toFixed(1))+"kg"}}
+        }
       }
     }
   });
@@ -310,7 +311,8 @@ function render(){
       var r=REC[d.id],hw=r.hw[CM],ws=(r.weight||[]);
       var lw=ws.length?ws.slice().sort(function(a,b){return b.date.localeCompare(a.date)})[0]:null;
       var hwBadge=hw==="skip"?'<span class="badge b-skip">不要</span>':hw?'<span class="badge b-ok">投与済</span>':'<span class="badge b-soon">未投与</span>';
-      var age=calcAge(r.birthday);var anni=calcYears(r.anniversary);
+      var age=calcAge(r.birthday);
+      var anni=calcYears(r.anniversary);
       return'<div class="ov-dog"><div class="ov-head"><div class="ov-dot" style="background:'+d.color+'"></div>'+d.emoji+" "+d.name+(age?' <span style="font-size:12px;color:var(--muted);font-weight:600">('+age+')</span>':'')+'</div>'+
       (r.birthday?'<div class="ov-item"><span>🎂 誕生日</span><span style="font-weight:700;color:var(--text)">'+fd(r.birthday)+'</span></div>':'')+
       (r.anniversary?'<div class="ov-item"><span>🏠 家族になった日</span><span style="font-weight:700;color:var(--text)">'+fd(r.anniversary)+(anni?' ('+anni+')':'')+'</span></div>':'')+
@@ -323,7 +325,8 @@ function render(){
 
   var dog=DOGS.find(function(d){return d.id===AD});
   var r=REC[AD];
-  var age=calcAge(r.birthday);var anni=calcYears(r.anniversary);
+  var age=calcAge(r.birthday);
+  var anni=calcYears(r.anniversary);
 
   var profileHTML='<div style="background:'+dog.color+'18;border:1.5px solid '+dog.color+'33;border-radius:20px;padding:18px;margin-bottom:4px;display:flex;align-items:center;gap:16px">'+
     '<div style="font-size:48px;line-height:1">'+dog.emoji+'</div>'+

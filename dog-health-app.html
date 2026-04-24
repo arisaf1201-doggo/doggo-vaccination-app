@@ -13,7 +13,9 @@ body{background:var(--bg);font-family:'Yomogi',sans-serif;color:var(--text);back
 .app{min-height:100vh;max-width:480px;margin:0 auto;padding:0 0 20px}
 .header{background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--border);padding:20px;position:sticky;top:0;z-index:100}
 .header-title{font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:space-between;letter-spacing:-0.3px}
+.header-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .sync-status{font-size:11px;color:var(--muted);font-weight:600}
+.backup-btn{background:var(--border);color:var(--muted);border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:'Yomogi',sans-serif}
 .dog-tabs{display:flex;gap:8px;margin-top:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .dog-tabs::-webkit-scrollbar{display:none}
 .dog-tab{padding:8px 16px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04);font-family:'Yomogi',sans-serif}
@@ -159,6 +161,41 @@ async function save(){
   try{await setDoc(docRef,{data:REC});document.getElementById("syncStatus").textContent="✅ 同期済み";}
   catch(e){document.getElementById("syncStatus").textContent="⚠️ 保存失敗";}
 }
+
+function dlFile(content,filename,type){
+  var blob=new Blob([content],{type:type});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+}
+
+function dateStr(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+
+
+window.downloadCSV=function(){
+  if(!REC){toast("⚠️ データがまだ読み込まれていません");return;}
+  var rows=[["犬名","種別","日付","詳細"]];
+  DOGS.forEach(function(d){
+    var r=REC[d.id];
+    if(r.birthday)rows.push([d.name,"誕生日",r.birthday,""]);
+    if(r.anniversary)rows.push([d.name,"家族になった日",r.anniversary,""]);
+    VACCINES.forEach(function(v){
+      var arr=(r.vaccines[v.id]||[]).map(function(x){return typeof x==="object"?x:{date:x,type:""}}).sort(function(a,b){return a.date.localeCompare(b.date)});
+      arr.forEach(function(item){rows.push([d.name,v.name,item.date,item.type||""])});
+    });
+    Object.entries(r.hw).forEach(function(e){
+      var m=e[0],val=e[1];
+      if(val)rows.push([d.name,"フィラリア",val==="skip"?"":val,val==="skip"?"不要":"投与済"]);
+    });
+    (r.weight||[]).sort(function(a,b){return a.date.localeCompare(b.date)}).forEach(function(w){
+      rows.push([d.name,"体重",w.date,w.kg+"kg"]);
+    });
+  });
+  var csv="\uFEFF"+rows.map(function(r){return r.map(function(c){return'"'+String(c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
+  dlFile(csv,"wanko-"+dateStr()+".csv","text/csv;charset=utf-8");
+  toast("📊 CSVをダウンロードしました");
+};
 
 function fd(s){if(!s)return"未記録";var d=new Date(s+"T00:00:00");return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"}
 function fds(s){if(!s)return"";var d=new Date(s+"T00:00:00");return(d.getMonth()+1)+"/"+d.getDate()}
